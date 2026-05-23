@@ -295,8 +295,8 @@
         <div>
           <div class="eyebrow">A taste of Munu</div>
           <h2>Contracts <span class="accent">all the way down</span>.</h2>
-          <p>A contract binds mu functions (what you <em>build</em>) and nu functions (what you <em>observe</em>) under a supervised behaviour. The <code>do:</code> clause governs local failure recovery. The <code>must:</code> clause is the obligation the supervisor enforces. Delay and failure are unified — a supervisor doesn't just handle crashes, it decides whether to absorb the failure and deliver a degraded result, or escalate.</p>
-          <p>When an LLM's generated code crashes at runtime, the supervisor catches it, formats a structured diagnostic, and feeds it back through the same dataflow variable the caller is waiting on. The LLM sees what went wrong, fixes the code, and retries — without losing context. The harness turns a crash into a conversation.</p>
+          <p>Every contract runs on its own lightweight thread in the kernel. A contract binds mu functions (what you <em>build</em>) and nu functions (what you <em>observe</em>) under a supervised behaviour. The <code>do:</code> clause governs local failure recovery. The <code>must:</code> clause is the obligation the supervisor enforces. When a thread crashes, it crashes only that contract — the supervisor decides whether to absorb the failure and deliver a degraded result, restart, or escalate.</p>
+          <p>When an LLM's generated code crashes at runtime, the supervisor catches the thread failure, formats a structured diagnostic, and feeds it back through the same dataflow variable the caller is waiting on. The LLM sees what went wrong, fixes the code, and retries — without losing context. The harness turns a thread crash into a conversation.</p>
           <a class="deep" href="methodology.html">
             Deep dive into the methodology
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>

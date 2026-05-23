@@ -446,46 +446,173 @@
           <div class="chapter" id="runtime">
             <div class="chapter-num">§ 03 — Runtime</div>
             <h2>Every variable is a <span class="accent">dataflow variable</span>.</h2>
-            <p>Every variable has a 6-state lifecycle. Reads block until <code>Bound</code>. Demand is implicit — reading a <code>WaitNeeded</code> variable wakes its producer. When a contract's <code>do:</code> fires Restart, its unbound variables go <code>TempFail</code>. When a child breaches its <code>must:</code>, they go <code>PermFail</code>. No recovery.</p>
+            <p>Every variable in the kernel has a 6-state lifecycle. Variables are single-assignment — once <code>Bound</code>, they never change. Reads block until the value arrives. There are two paths through the FSM: <strong>eager</strong> variables that are allocated unbound and computed immediately, and <strong>lazy</strong> variables whose producer parks until a consumer demands the value.</p>
 
-            <div class="lifecycle">
-              <div class="lc-state"><div class="lc-dot"></div><div class="lc-name">Unbound</div><div class="lc-arr">→</div></div>
-              <div class="lc-state"><div class="lc-dot"></div><div class="lc-name">WaitNeeded</div><div class="lc-arr">→</div></div>
-              <div class="lc-state"><div class="lc-dot"></div><div class="lc-name">Needed</div><div class="lc-arr">→</div></div>
-              <div class="lc-state bound"><div class="lc-dot"></div><div class="lc-name">Bound</div><div class="lc-arr">·</div></div>
-              <div class="lc-state fail"><div class="lc-dot"></div><div class="lc-name">TempFail</div><div class="lc-arr">↻</div></div>
-              <div class="lc-state fail"><div class="lc-dot"></div><div class="lc-name">PermFail</div><div class="lc-arr">⊥</div></div>
+            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 36px 24px; margin-top: 32px;">
+              <svg viewBox="0 0 700 360" width="100%" style="display: block; max-width: 700px; margin: 0 auto;">
+                <defs>
+                  <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                    <path d="M0,0 L8,3 L0,6" fill="none" stroke="var(--accent)" stroke-width="1"/>
+                  </marker>
+                  <marker id="arrowDim" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                    <path d="M0,0 L8,3 L0,6" fill="none" stroke="var(--text-dim)" stroke-width="1"/>
+                  </marker>
+                  <marker id="arrowStruct" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                    <path d="M0,0 L8,3 L0,6" fill="none" stroke="var(--struct)" stroke-width="1"/>
+                  </marker>
+                  <marker id="arrowDanger" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                    <path d="M0,0 L8,3 L0,6" fill="none" stroke="var(--danger)" stroke-width="1"/>
+                  </marker>
+                </defs>
+
+                <!--
+                  LEFT SIDE                    RIGHT SIDE
+                  Row 1: UNBOUND  WAITNEEDED   TEMPFAIL
+                  Row 2:     NEEDED             PERMFAIL
+                  Row 3:     BOUND              Legend
+                -->
+
+                <!-- LEFT: UNBOUND (top-left) -->
+                <rect x="20" y="30" width="120" height="50" rx="6" fill="var(--bg-card-hov)" stroke="var(--border-strong)" stroke-width="1"/>
+                <circle cx="80" cy="43" r="4" fill="var(--text-dim)"/>
+                <text x="80" y="67" text-anchor="middle" font-family="Geist Mono, monospace" font-size="10" fill="var(--text)" letter-spacing="0.1em">UNBOUND</text>
+
+                <!-- LEFT: WAITNEEDED (top-right of left side) -->
+                <rect x="220" y="30" width="140" height="50" rx="6" fill="var(--bg-card-hov)" stroke="var(--border-strong)" stroke-width="1"/>
+                <circle cx="290" cy="43" r="4" fill="var(--text-dim)"/>
+                <text x="290" y="67" text-anchor="middle" font-family="Geist Mono, monospace" font-size="10" fill="var(--text)" letter-spacing="0.1em">WAITNEEDED</text>
+
+                <!-- LEFT: NEEDED (middle center) -->
+                <rect x="120" y="140" width="120" height="50" rx="6" fill="var(--bg-card-hov)" stroke="var(--border-strong)" stroke-width="1"/>
+                <circle cx="180" cy="153" r="4" fill="var(--text-dim)"/>
+                <text x="180" y="177" text-anchor="middle" font-family="Geist Mono, monospace" font-size="10" fill="var(--text)" letter-spacing="0.1em">NEEDED</text>
+
+                <!-- LEFT: BOUND (middle lower) -->
+                <rect x="120" y="250" width="120" height="50" rx="6" fill="var(--bg-card-hov)" stroke="rgba(45,212,191,0.4)" stroke-width="1.5"/>
+                <circle cx="180" cy="263" r="4" fill="var(--accent)"/>
+                <text x="180" y="287" text-anchor="middle" font-family="Geist Mono, monospace" font-size="10" fill="var(--accent)" letter-spacing="0.1em">BOUND</text>
+                <text x="180" y="316" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="var(--text-dim)">terminal</text>
+
+                <!-- RIGHT: TEMPFAIL (top) -->
+                <rect x="470" y="30" width="120" height="50" rx="6" fill="var(--bg-card-hov)" stroke="rgba(248,113,113,0.35)" stroke-width="1.5"/>
+                <circle cx="530" cy="43" r="4" fill="var(--danger)"/>
+                <text x="530" y="67" text-anchor="middle" font-family="Geist Mono, monospace" font-size="10" fill="var(--danger)" letter-spacing="0.1em">TEMPFAIL</text>
+
+                <!-- RIGHT: PERMFAIL (middle) -->
+                <rect x="470" y="140" width="120" height="50" rx="6" fill="var(--bg-card-hov)" stroke="rgba(248,113,113,0.35)" stroke-width="1.5"/>
+                <circle cx="530" cy="153" r="4" fill="var(--danger)"/>
+                <text x="530" y="177" text-anchor="middle" font-family="Geist Mono, monospace" font-size="10" fill="var(--danger)" letter-spacing="0.1em">PERMFAIL</text>
+                <text x="530" y="206" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="var(--text-dim)">terminal</text>
+
+                <!-- === TRANSITIONS === -->
+
+                <!-- Unbound → Needed (read → suspend): down from Unbound bottom to Needed left -->
+                <path d="M 80 80 L 80 165 L 118 165" fill="none" stroke="var(--text-dim)" stroke-width="1" marker-end="url(#arrowDim)"/>
+                <text x="20" y="125" text-anchor="start" font-family="Geist Mono, monospace" font-size="9" fill="var(--text-dim)">read()</text>
+                <text x="20" y="137" text-anchor="start" font-family="Geist Mono, monospace" font-size="9" fill="var(--text-dim)">→ suspend</text>
+
+                <!-- WaitNeeded → Needed (demand wake): down from WaitNeeded bottom to Needed right -->
+                <path d="M 290 80 L 290 165 L 242 165" fill="none" stroke="var(--struct)" stroke-width="1" marker-end="url(#arrowStruct)"/>
+                <text x="298" y="125" text-anchor="start" font-family="Geist Mono, monospace" font-size="9" fill="var(--struct)">demand</text>
+                <text x="298" y="137" text-anchor="start" font-family="Geist Mono, monospace" font-size="9" fill="var(--struct)">wake</text>
+
+                <!-- Needed → Bound (bind): straight down -->
+                <line x1="180" y1="190" x2="180" y2="248" stroke="var(--accent)" stroke-width="1" marker-end="url(#arrow)"/>
+                <text x="194" y="224" text-anchor="start" font-family="Geist Mono, monospace" font-size="9" fill="var(--accent)">bind()</text>
+
+                <!-- Needed → TempFail (crash): right from Needed bottom-right, then up to TempFail left -->
+                <path d="M 240 180 L 420 180 Q 430 180 430 170 L 430 65 Q 430 55 440 55 L 468 55" fill="none" stroke="var(--danger)" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrowDanger)"/>
+                <text x="300" y="195" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="var(--danger)">crash</text>
+
+                <!-- TempFail → Bound: out bottom of TempFail at x=450, down past crash line, left, down to Bound -->
+                <path d="M 470 68 L 450 68 Q 440 68 440 78 L 440 200 Q 440 210 430 210 L 380 210 Q 370 210 370 220 L 370 265 Q 370 275 360 275 L 242 275" fill="none" stroke="var(--accent)" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+                <text x="378" y="250" text-anchor="start" font-family="Geist Mono, monospace" font-size="9" fill="var(--text-dim)">restart + bind()</text>
+
+                <!-- TempFail → PermFail (escalate): straight down -->
+                <line x1="530" y1="80" x2="530" y2="138" stroke="var(--danger)" stroke-width="1" marker-end="url(#arrowDanger)"/>
+                <text x="544" y="114" text-anchor="start" font-family="Geist Mono, monospace" font-size="9" fill="var(--danger)">escalate</text>
+
+                <!-- RIGHT: Legend (bottom) -->
+                <rect x="470" y="260" width="190" height="90" rx="6" fill="var(--bg-card-hov)" stroke="var(--border)" stroke-width="1"/>
+                <line x1="485" y1="285" x2="515" y2="285" stroke="var(--accent)" stroke-width="1"/>
+                <text x="523" y="289" font-family="Geist Mono, monospace" font-size="9" fill="var(--text-dim)">happy path</text>
+                <line x1="485" y1="305" x2="515" y2="305" stroke="var(--struct)" stroke-width="1"/>
+                <text x="523" y="309" font-family="Geist Mono, monospace" font-size="9" fill="var(--text-dim)">lazy demand</text>
+                <line x1="485" y1="325" x2="515" y2="325" stroke="var(--danger)" stroke-width="1" stroke-dasharray="4,3"/>
+                <text x="523" y="329" font-family="Geist Mono, monospace" font-size="9" fill="var(--text-dim)">failure</text>
+              </svg>
             </div>
+
+            <p style="margin-top: 32px; color: var(--text-mute); font-size: 15px;"><strong style="color: var(--text);">Failure states:</strong> When a contract's <code>do:</code> fires Restart, its unbound variables go <code>TempFail</code> — recoverable when the producer restarts and binds. When a child breaches its <code>must:</code> or the supervisor escalates, variables go <code>PermFail</code> — terminal, no recovery.</p>
+
+            <h3 style="margin-top: 48px; font-size: 18px;">Eager dataflow: Unbound → Needed → Bound</h3>
+            <p style="color: var(--text-mute); font-size: 15px; margin-bottom: 24px;">The producer computes immediately. A reader that arrives before the value is ready suspends and waits.</p>
 
             <div class="fsm-runner">
               <div class="fsm-panel">
-                <h4>Kernel state — two contracts, two variables</h4>
-                <div id="varRow">
-                  <span class="var-pill" data-var="x"><span class="vdot"></span><span class="vname">x = ?</span><span class="vstate">Unbound</span></span>
-                  <span class="var-pill" data-var="y"><span class="vdot"></span><span class="vname">y = ?</span><span class="vstate">Unbound</span></span>
+                <h4>Eager — two contracts, two variables</h4>
+                <div id="varRowEager">
+                  <span class="var-pill" data-var="x" data-fsm="eager"><span class="vdot"></span><span class="vname">x = ?</span><span class="vstate">Unbound</span></span>
+                  <span class="var-pill" data-var="y" data-fsm="eager"><span class="vdot"></span><span class="vname">y = ?</span><span class="vstate">Unbound</span></span>
                 </div>
 
-                <div class="contract-row ready" data-contract="c1">
-                  <span class="cname">contract c₁</span>
+                <div class="contract-row ready" data-contract="e1">
+                  <span class="cname">thread t₁</span>
                   <span class="cbody">let v = read(x); print(v)</span>
                   <span class="cstatus">Ready</span>
                 </div>
-                <div class="contract-row ready" data-contract="c2">
-                  <span class="cname">contract c₂</span>
+                <div class="contract-row ready" data-contract="e2">
+                  <span class="cname">thread t₂</span>
                   <span class="cbody">let y = 7 * 6; let x = y</span>
                   <span class="cstatus">Ready</span>
                 </div>
 
                 <div class="fsm-controls">
-                  <button class="fsm-btn" id="fsmStep">▶ Step</button>
-                  <button class="fsm-btn secondary" id="fsmReset">Reset</button>
-                  <span class="fsm-step-count" id="fsmCount">Step 0 / 6</span>
+                  <button class="fsm-btn" id="eagerStep">▶ Step</button>
+                  <button class="fsm-btn secondary" id="eagerReset">Reset</button>
+                  <span class="fsm-step-count" id="eagerCount">Step 0 / 5</span>
                 </div>
               </div>
 
               <div class="fsm-panel">
                 <h4>Trace</h4>
-                <div class="fsm-trace" id="fsmTrace">
+                <div class="fsm-trace" id="eagerTrace">
+                  <div class="trace-line empty">— press step to advance —</div>
+                </div>
+              </div>
+            </div>
+
+            <h3 style="margin-top: 48px; font-size: 18px;">Lazy dataflow: WaitNeeded → Needed → Bound</h3>
+            <p style="color: var(--text-mute); font-size: 15px; margin-bottom: 24px;">The producer parks immediately via <code>ParkLazy</code>. Nothing runs until a consumer reads the variable — the read triggers a demand wake that moves the producer from Parked to Ready.</p>
+
+            <div class="fsm-runner">
+              <div class="fsm-panel">
+                <h4>Lazy — producer parks until demanded</h4>
+                <div id="varRowLazy">
+                  <span class="var-pill" data-var="z" data-fsm="lazy"><span class="vdot"></span><span class="vname">z = ?</span><span class="vstate">WaitNeeded</span></span>
+                </div>
+
+                <div class="contract-row ready" data-contract="l1">
+                  <span class="cname">producer</span>
+                  <span class="cbody">ParkLazy z; compute(); bind(z)</span>
+                  <span class="cstatus">Parked</span>
+                </div>
+                <div class="contract-row ready" data-contract="l2">
+                  <span class="cname">consumer</span>
+                  <span class="cbody">let v = read(z); use(v)</span>
+                  <span class="cstatus">Ready</span>
+                </div>
+
+                <div class="fsm-controls">
+                  <button class="fsm-btn" id="lazyStep">▶ Step</button>
+                  <button class="fsm-btn secondary" id="lazyReset">Reset</button>
+                  <span class="fsm-step-count" id="lazyCount">Step 0 / 4</span>
+                </div>
+              </div>
+
+              <div class="fsm-panel">
+                <h4>Trace</h4>
+                <div class="fsm-trace" id="lazyTrace">
                   <div class="trace-line empty">— press step to advance —</div>
                 </div>
               </div>
@@ -641,65 +768,82 @@
     info.innerHTML = '<span style="font-style: italic;">hover a node — the lattice is partially ordered by subsumption</span>';
   });
 
-  // FSM stepper
-  const FSM_STEPS = [
-    { vars: { x: ["?", "Unbound"], y: ["?", "Unbound"] }, c1: "Ready", c2: "Ready", trace: "" },
-    { vars: { x: ["?", "Needed"], y: ["?", "Unbound"] }, c1: "Read(x) → blocked", c2: "Ready", trace: "c₁: read(x) ⇒ x WaitNeeded" },
-    { vars: { x: ["?", "Needed"], y: ["?", "WaitNeeded"] }, c1: "blocked", c2: "Computing y", trace: "c₂: demand wakes producer of y" },
-    { vars: { x: ["?", "Needed"], y: ["42", "Bound"] }, c1: "blocked", c2: "Bound y", trace: "c₂: y ⇐ 42 (Bound)" },
-    { vars: { x: ["42", "Bound"], y: ["42", "Bound"] }, c1: "Resumed", c2: "let x = y", trace: "c₂: x ⇐ y ⇒ x Bound" },
-    { vars: { x: ["42", "Bound"], y: ["42", "Bound"] }, c1: "print(42)", c2: "Done", trace: "c₁: print(42) ✓" },
-    { vars: { x: ["42", "Bound"], y: ["42", "Bound"] }, c1: "Done", c2: "Done", trace: "kernel quiescent" }
-  ];
-  let stepIdx = 0;
-  const stepBtn = document.getElementById("fsmStep");
-  const resetBtn = document.getElementById("fsmReset");
-  const counter = document.getElementById("fsmCount");
-  const trace = document.getElementById("fsmTrace");
-
-  function renderFSM() {
-    const s = FSM_STEPS[stepIdx];
-    document.querySelectorAll(".var-pill").forEach(p => {
-      const v = p.dataset.var;
-      const [val, state] = s.vars[v];
-      p.querySelector(".vname").textContent = `${v} = ${val}`;
-      p.querySelector(".vstate").textContent = state;
-      p.classList.toggle("bound", state === "Bound");
-    });
-    const c1 = document.querySelector('[data-contract="c1"]');
-    const c2 = document.querySelector('[data-contract="c2"]');
-    c1.querySelector(".cbody").textContent = `let v = read(x); print(v)`;
-    c2.querySelector(".cbody").textContent = `let y = 7 * 6; let x = y`;
-    c1.querySelector(".cstatus").textContent = s.c1;
-    c2.querySelector(".cstatus").textContent = s.c2;
-    c1.classList.toggle("done", s.c1 === "Done");
-    c2.classList.toggle("done", s.c2 === "Done");
-
-    counter.textContent = `Step ${stepIdx} / ${FSM_STEPS.length - 1}`;
-  }
-  function pushTrace(text) {
-    if (!text) return;
-    const empty = trace.querySelector(".empty");
-    if (empty) empty.remove();
-    const line = document.createElement("div");
-    line.className = "trace-line";
-    line.innerHTML = `<span class="ts">[${String(stepIdx).padStart(2,"0")}]</span><span class="ev">${text}</span>`;
-    trace.appendChild(line);
-    trace.scrollTop = trace.scrollHeight;
-  }
-  stepBtn.addEventListener("click", () => {
-    if (stepIdx < FSM_STEPS.length - 1) {
-      stepIdx++;
-      pushTrace(FSM_STEPS[stepIdx].trace);
-      renderFSM();
+  // Stepper factory
+  function makeStepper(cfg) {
+    var idx = 0;
+    function render() {
+      var s = cfg.steps[idx];
+      var pills = document.querySelectorAll('.var-pill[data-fsm="' + cfg.id + '"]');
+      pills.forEach(function(p) {
+        var v = p.dataset.var;
+        if (s.vars[v]) {
+          p.querySelector(".vname").textContent = v + " = " + s.vars[v][0];
+          p.querySelector(".vstate").textContent = s.vars[v][1];
+          p.classList.toggle("bound", s.vars[v][1] === "Bound");
+        }
+      });
+      cfg.contracts.forEach(function(c) {
+        var el = document.querySelector('[data-contract="' + c.id + '"]');
+        el.querySelector(".cstatus").textContent = s[c.id];
+        el.classList.toggle("done", s[c.id] === "Done");
+      });
+      cfg.counter.textContent = "Step " + idx + " / " + (cfg.steps.length - 1);
     }
+    function pushTrace(text) {
+      if (!text) return;
+      var empty = cfg.trace.querySelector(".empty");
+      if (empty) empty.remove();
+      var line = document.createElement("div");
+      line.className = "trace-line";
+      line.innerHTML = '<span class="ts">[' + String(idx).padStart(2,"0") + ']</span><span class="ev">' + text + '</span>';
+      cfg.trace.appendChild(line);
+      cfg.trace.scrollTop = cfg.trace.scrollHeight;
+    }
+    cfg.stepBtn.addEventListener("click", function() {
+      if (idx < cfg.steps.length - 1) { idx++; pushTrace(cfg.steps[idx].trace); render(); }
+    });
+    cfg.resetBtn.addEventListener("click", function() {
+      idx = 0;
+      cfg.trace.innerHTML = '<div class="trace-line empty">— press step to advance —</div>';
+      render();
+    });
+    render();
+  }
+
+  // Eager stepper: Unbound → Needed → Bound
+  makeStepper({
+    id: "eager",
+    steps: [
+      { vars: { x: ["?", "Unbound"], y: ["?", "Unbound"] }, e1: "Ready", e2: "Ready", trace: "" },
+      { vars: { x: ["?", "Unbound"], y: ["?", "Unbound"] }, e1: "read(x) → Suspended", e2: "Ready", trace: "t₁: read(x) → x is Unbound, t₁ added to waiters, t₁ suspends" },
+      { vars: { x: ["?", "Unbound"], y: ["42", "Bound"] }, e1: "Suspended", e2: "bind(y, 42)", trace: "t₂: y ⇐ 42 → Bound" },
+      { vars: { x: ["42", "Bound"], y: ["42", "Bound"] }, e1: "Suspended", e2: "bind(x, y)", trace: "t₂: x ⇐ 42 → Bound, t₁ wakes (was in waiter list)" },
+      { vars: { x: ["42", "Bound"], y: ["42", "Bound"] }, e1: "read(x) → 42", e2: "Done", trace: "t₁: resumes, read(x) = 42, print(42) ✓" },
+      { vars: { x: ["42", "Bound"], y: ["42", "Bound"] }, e1: "Done", e2: "Done", trace: "kernel quiescent" }
+    ],
+    contracts: [{ id: "e1" }, { id: "e2" }],
+    stepBtn: document.getElementById("eagerStep"),
+    resetBtn: document.getElementById("eagerReset"),
+    counter: document.getElementById("eagerCount"),
+    trace: document.getElementById("eagerTrace")
   });
-  resetBtn.addEventListener("click", () => {
-    stepIdx = 0;
-    trace.innerHTML = '<div class="trace-line empty">— press step to advance —</div>';
-    renderFSM();
+
+  // Lazy stepper: WaitNeeded → Needed → Bound
+  makeStepper({
+    id: "lazy",
+    steps: [
+      { vars: { z: ["?", "WaitNeeded"] }, l1: "Parked", l2: "Ready", trace: "" },
+      { vars: { z: ["?", "Needed"] }, l1: "Ready (demand wake)", l2: "read(z) → Suspended", trace: "consumer: read(z) → z is WaitNeeded, demand wake fires, producer Parked → Ready" },
+      { vars: { z: ["?", "Needed"] }, l1: "Computing...", l2: "Suspended", trace: "producer: woken, now computing the value" },
+      { vars: { z: ["99", "Bound"] }, l1: "bind(z, 99)", l2: "Suspended", trace: "producer: z ⇐ 99 → Bound, consumer wakes (was in waiter list)" },
+      { vars: { z: ["99", "Bound"] }, l1: "Done", l2: "read(z) → 99", trace: "consumer: resumes, read(z) = 99 ✓" }
+    ],
+    contracts: [{ id: "l1" }, { id: "l2" }],
+    stepBtn: document.getElementById("lazyStep"),
+    resetBtn: document.getElementById("lazyReset"),
+    counter: document.getElementById("lazyCount"),
+    trace: document.getElementById("lazyTrace")
   });
-  renderFSM();
 </script>
 </body>
 </html>
