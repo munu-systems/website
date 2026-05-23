@@ -548,25 +548,44 @@
             <p style="margin-top: 32px; color: var(--text-mute); font-size: 15px;"><strong style="color: var(--text);">Failure states:</strong> When a contract's <code>do:</code> fires Restart, its unbound variables go <code>TempFail</code> — recoverable when the producer restarts and binds. When a child breaches its <code>must:</code> or the supervisor escalates, variables go <code>PermFail</code> — terminal, no recovery.</p>
 
             <h3 style="margin-top: 48px; font-size: 18px;">Eager dataflow: Unbound → Needed → Bound</h3>
-            <p style="color: var(--text-mute); font-size: 15px; margin-bottom: 24px;">The producer computes immediately. A reader that arrives before the value is ready suspends and waits.</p>
+            <p style="color: var(--text-mute); font-size: 15px; margin-bottom: 24px;">When a contract calls a nu function or another contract, the callee runs on its own thread. The result variable starts Unbound. If the caller reads it before the callee finishes, the caller's thread suspends until the value is bound.</p>
+
+            <div class="code-window" style="margin-bottom: 24px;">
+              <div class="code-window-head">
+                <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+                <span>eager_example.uv</span>
+                <span></span>
+              </div>
+<pre><span class="kw">nu</span> <span class="fn">produce</span><span class="pn">(</span>n<span class="pn">:</span> i64<span class="pn">)</span> <span class="pn">-&gt;</span> <span class="pn">[</span>i64<span class="pn">]</span> <span class="pn">{</span>
+  n <span class="pn">=&gt;</span> <span class="pn">[</span>n <span class="pn">*</span> <span class="num">2</span> <span class="pn">|</span> produce<span class="pn">(</span>n <span class="pn">+</span> <span class="num">1</span><span class="pn">)]</span>
+<span class="pn">}</span>
+
+<span class="kw">mu</span> <span class="fn">head_of</span><span class="pn">(</span>xs<span class="pn">:</span> <span class="pn">[</span>i64<span class="pn">])</span> <span class="pn">-&gt;</span> i64 <span class="pn">{</span>
+  <span class="pn">[</span>h <span class="pn">|</span> _<span class="pn">]</span> <span class="pn">=&gt;</span> h
+<span class="pn">}</span>
+
+<span class="kw">pub contract</span> <span class="fn">Eager</span><span class="pn">(</span>n<span class="pn">:</span> i64<span class="pn">)</span> <span class="pn">-&gt;</span> <span class="pn">[</span>i64<span class="pn">]</span> <span class="pn">{</span>
+  <span class="kw">let</span> stream <span class="pn">=</span> <span class="kw">spawn</span> produce<span class="pn">(</span>n<span class="pn">);</span>  <span class="com">// spawns produce on its own thread</span>
+  head_of<span class="pn">(</span>stream<span class="pn">)</span>           <span class="com">// blocks until first element is Bound</span>
+<span class="pn">}</span></pre>
+            </div>
 
             <div class="fsm-runner">
               <div class="fsm-panel">
-                <h4>Eager — two contracts, two variables</h4>
+                <h4>Eager — contract reads stream head before it's bound</h4>
                 <div id="varRowEager">
-                  <span class="var-pill" data-var="x" data-fsm="eager"><span class="vdot"></span><span class="vname">x = ?</span><span class="vstate">Unbound</span></span>
-                  <span class="var-pill" data-var="y" data-fsm="eager"><span class="vdot"></span><span class="vname">y = ?</span><span class="vstate">Unbound</span></span>
+                  <span class="var-pill" data-var="x" data-fsm="eager"><span class="vdot"></span><span class="vname">stream.head = ?</span><span class="vstate">Unbound</span></span>
                 </div>
 
                 <div class="contract-row ready" data-contract="e1">
-                  <span class="cname">thread t₁</span>
-                  <span class="cbody">let v = read(x); print(v)</span>
+                  <span class="cname">contract Eager</span>
+                  <span class="cbody">let stream = spawn produce(n); head_of(stream)</span>
                   <span class="cstatus">Ready</span>
                 </div>
                 <div class="contract-row ready" data-contract="e2">
-                  <span class="cname">thread t₂</span>
-                  <span class="cbody">let y = 7 * 6; let x = y</span>
-                  <span class="cstatus">Ready</span>
+                  <span class="cname">nu produce</span>
+                  <span class="cbody">n => [n * 2 | produce(n + 1)]</span>
+                  <span class="cstatus">—</span>
                 </div>
 
                 <div class="fsm-controls">
@@ -585,23 +604,46 @@
             </div>
 
             <h3 style="margin-top: 48px; font-size: 18px;">Lazy dataflow: WaitNeeded → Needed → Bound</h3>
-            <p style="color: var(--text-mute); font-size: 15px; margin-bottom: 24px;">The producer parks immediately via <code>ParkLazy</code>. Nothing runs until a consumer reads the variable — the read triggers a demand wake that moves the producer from Parked to Ready.</p>
+            <p style="color: var(--text-mute); font-size: 15px; margin-bottom: 24px;">A <code>lazy mu</code> function returns immediately with a WaitNeeded variable — the body doesn't execute. When something demands the result (arithmetic, match, or a read), the body wakes and runs.</p>
+
+            <div class="code-window" style="margin-bottom: 24px;">
+              <div class="code-window-head">
+                <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+                <span>lazy_example.uv</span>
+                <span></span>
+              </div>
+<pre><span class="com">// body does not run until result is demanded</span>
+<span class="kw">lazy mu</span> <span class="fn">compute</span><span class="pn">(</span>n<span class="pn">:</span> i64<span class="pn">)</span> <span class="pn">-&gt;</span> i64 <span class="pn">{</span>
+  n <span class="pn">=&gt;</span> n <span class="pn">*</span> <span class="num">2</span>
+<span class="pn">}</span>
+
+<span class="kw">mu</span> <span class="fn">use_result</span><span class="pn">(</span>n<span class="pn">:</span> i64<span class="pn">)</span> <span class="pn">-&gt;</span> i64 <span class="pn">{</span>
+  n <span class="pn">=&gt;</span> <span class="pn">{</span>
+    <span class="kw">let</span> result <span class="pn">=</span> compute<span class="pn">(</span>n<span class="pn">);</span>  <span class="com">// returns WaitNeeded — body does not run</span>
+    result <span class="pn">+</span> <span class="num">5</span>              <span class="com">// demands result → body wakes, returns 25</span>
+  <span class="pn">}</span>
+<span class="pn">}</span>
+
+<span class="kw">pub contract</span> <span class="fn">Lazy</span><span class="pn">(</span>n<span class="pn">:</span> i64<span class="pn">)</span> <span class="pn">-&gt;</span> <span class="pn">[</span>i64<span class="pn">]</span> <span class="pn">{</span>
+  use_result<span class="pn">(</span>n<span class="pn">)</span>
+<span class="pn">}</span></pre>
+            </div>
 
             <div class="fsm-runner">
               <div class="fsm-panel">
-                <h4>Lazy — producer parks until demanded</h4>
+                <h4>Lazy — body doesn't run until demanded</h4>
                 <div id="varRowLazy">
-                  <span class="var-pill" data-var="z" data-fsm="lazy"><span class="vdot"></span><span class="vname">z = ?</span><span class="vstate">WaitNeeded</span></span>
+                  <span class="var-pill" data-var="result" data-fsm="lazy"><span class="vdot"></span><span class="vname">result = ?</span><span class="vstate">WaitNeeded</span></span>
                 </div>
 
                 <div class="contract-row ready" data-contract="l1">
-                  <span class="cname">producer</span>
-                  <span class="cbody">ParkLazy z; compute(); bind(z)</span>
+                  <span class="cname">lazy mu compute</span>
+                  <span class="cbody">n => n * 2</span>
                   <span class="cstatus">Parked</span>
                 </div>
                 <div class="contract-row ready" data-contract="l2">
-                  <span class="cname">consumer</span>
-                  <span class="cbody">let v = read(z); use(v)</span>
+                  <span class="cname">mu use_result</span>
+                  <span class="cbody">let result = compute(10); result + 5</span>
                   <span class="cstatus">Ready</span>
                 </div>
 
@@ -816,12 +858,12 @@
   makeStepper({
     id: "eager",
     steps: [
-      { vars: { x: ["?", "Unbound"], y: ["?", "Unbound"] }, e1: "Ready", e2: "Ready", trace: "" },
-      { vars: { x: ["?", "Unbound"], y: ["?", "Unbound"] }, e1: "read(x) → Suspended", e2: "Ready", trace: "t₁: read(x) → x is Unbound, t₁ added to waiters, t₁ suspends" },
-      { vars: { x: ["?", "Unbound"], y: ["42", "Bound"] }, e1: "Suspended", e2: "bind(y, 42)", trace: "t₂: y ⇐ 42 → Bound" },
-      { vars: { x: ["42", "Bound"], y: ["42", "Bound"] }, e1: "Suspended", e2: "bind(x, y)", trace: "t₂: x ⇐ 42 → Bound, t₁ wakes (was in waiter list)" },
-      { vars: { x: ["42", "Bound"], y: ["42", "Bound"] }, e1: "read(x) → 42", e2: "Done", trace: "t₁: resumes, read(x) = 42, print(42) ✓" },
-      { vars: { x: ["42", "Bound"], y: ["42", "Bound"] }, e1: "Done", e2: "Done", trace: "kernel quiescent" }
+      { vars: { x: ["?", "Unbound"] }, e1: "Ready", e2: "—", trace: "" },
+      { vars: { x: ["?", "Unbound"] }, e1: "let stream = produce(10)", e2: "Ready", trace: "Eager: spawn produce(10) — nu function runs on its own thread, stream.head is Unbound" },
+      { vars: { x: ["?", "Unbound"] }, e1: "head_of(stream) → Suspended", e2: "Running", trace: "Eager: head_of reads stream.head → still Unbound, Eager thread suspends, added to waiters" },
+      { vars: { x: ["20", "Bound"] }, e1: "Suspended", e2: "10 * 2 = 20", trace: "produce: computes 10 * 2 = 20, stream.head ⇐ 20 → Bound, Eager wakes" },
+      { vars: { x: ["20", "Bound"] }, e1: "head_of → 20", e2: "Done", trace: "Eager: resumes, head_of(stream) = 20 ✓" },
+      { vars: { x: ["20", "Bound"] }, e1: "Done", e2: "Done", trace: "kernel quiescent" }
     ],
     contracts: [{ id: "e1" }, { id: "e2" }],
     stepBtn: document.getElementById("eagerStep"),
@@ -834,11 +876,12 @@
   makeStepper({
     id: "lazy",
     steps: [
-      { vars: { z: ["?", "WaitNeeded"] }, l1: "Parked", l2: "Ready", trace: "" },
-      { vars: { z: ["?", "Needed"] }, l1: "Ready (demand wake)", l2: "read(z) → Suspended", trace: "consumer: read(z) → z is WaitNeeded, demand wake fires, producer Parked → Ready" },
-      { vars: { z: ["?", "Needed"] }, l1: "Computing...", l2: "Suspended", trace: "producer: woken, now computing the value" },
-      { vars: { z: ["99", "Bound"] }, l1: "bind(z, 99)", l2: "Suspended", trace: "producer: z ⇐ 99 → Bound, consumer wakes (was in waiter list)" },
-      { vars: { z: ["99", "Bound"] }, l1: "Done", l2: "read(z) → 99", trace: "consumer: resumes, read(z) = 99 ✓" }
+      { vars: { result: ["?", "WaitNeeded"] }, l1: "Parked", l2: "Ready", trace: "" },
+      { vars: { result: ["?", "WaitNeeded"] }, l1: "Parked", l2: "let result = compute(10)", trace: "use_result: calls compute(10) → result is WaitNeeded, compute body execution deferred — call returns immediately" },
+      { vars: { result: ["?", "Needed"] }, l1: "Woken", l2: "result + 5 → Suspended", trace: "use_result: result + 5 demands result → demand wake fires, compute body wakes" },
+      { vars: { result: ["20", "Bound"] }, l1: "Done", l2: "Suspended", trace: "compute: body runs, 10 * 2 = 20, result ⇐ 20 → Bound, use_result wakes" },
+      { vars: { result: ["20", "Bound"] }, l1: "Done", l2: "20 + 5 = 25", trace: "use_result: resumes, result = 20, returns 20 + 5 = 25 ✓" },
+      { vars: { result: ["20", "Bound"] }, l1: "Done", l2: "Done", trace: "kernel quiescent" }
     ],
     contracts: [{ id: "l1" }, { id: "l2" }],
     stepBtn: document.getElementById("lazyStep"),
