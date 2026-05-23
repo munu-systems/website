@@ -264,7 +264,7 @@
     <div class="container">
       <span class="eyebrow">Projects</span>
       <h1>The Munu <span class="accent">Ecosystem.</span></h1>
-      <p class="lede">Munu is not a single repository — it is a constellation of focused projects, each with a clear responsibility. The compiler, kernel, networking layer, and tooling are developed independently and composed at build time.</p>
+      <p class="lede">Munu is a Rust monorepo — compiler, kernel, ISA, datom store, and CLI — developed together and published as separate crates. Companion projects extend the platform into inference and conversational development.</p>
     </div>
   </section>
 
@@ -280,26 +280,29 @@
              <span class="d">└────────┬────────┘</span>
                       <span class="d">│</span>
              <span class="d">┌────────▼────────┐</span>
-             <span class="d">│</span>      <span class="b">munu</span>       <span class="d">│</span>
-             <span class="d">│ (compiler pipeline) │</span>
-             <span class="d">│ parse → check → emit │</span>
-             <span class="d">└──┬──────┬──────┬──┘</span>
-                <span class="d">│</span>      <span class="d">│</span>      <span class="d">│</span>
-          <span class="d">┌─────▼─┐ ┌─▼───┐ ┌─▼───┐</span>
-          <span class="d">│</span> <span class="b">native</span> <span class="d">│ │</span> <span class="b">wasm</span> <span class="d">│ │</span> <span class="b">mcu</span>  <span class="d">│</span>
-          <span class="d">│ (Rust) │ │(WASI)│ │(Cortex)│</span>
-          <span class="d">└─────┬─┘ └─┬───┘ └─┬───┘</span>
-                <span class="d">│</span>     <span class="d">│</span>     <span class="d">│</span>
-             <span class="d">┌──▼─────▼─────▼──┐</span>
-             <span class="d">│</span>     <span class="b">kernel</span>      <span class="d">│</span>
-             <span class="d">│ (dataflow VM, steps bytecode) │</span>
+             <span class="d">│</span>  <span class="b">munu_compiler</span>  <span class="d">│</span>
+             <span class="d">│  parse → check → emit │</span>
              <span class="d">└────────┬────────┘</span>
                       <span class="d">│</span>
-          <span class="d">┌───────────┴───────────┐</span>
-       <span class="d">┌──▼──────┐         ┌─────▼──────┐</span>
-       <span class="d">│</span> <span class="b">datalog</span> <span class="d">│         │</span> <span class="b">blackframe</span> <span class="d">│</span>
-       <span class="d">│ (fact store) │     │ (networking) │</span>
-       <span class="d">└─────────┘         └────────────┘</span></pre>
+             <span class="d">┌────────▼────────┐</span>
+             <span class="d">│</span>    <span class="b">munu_isa</span>     <span class="d">│</span>
+             <span class="d">│  (36-opcode bytecode)  │</span>
+             <span class="d">└────────┬────────┘</span>
+                      <span class="d">│</span>
+             <span class="d">┌────────▼────────┐</span>
+             <span class="d">│</span>   <span class="b">munu_kernel</span>   <span class="d">│</span>
+             <span class="d">│ (no_std dataflow VM)   │</span>
+             <span class="d">└────────┬────────┘</span>
+                      <span class="d">│</span>
+             <span class="d">┌────────▼────────┐</span>
+             <span class="d">│</span>     <span class="b">datom</span>       <span class="d">│</span>
+             <span class="d">│ (EAVT fact store)     │</span>
+             <span class="d">└────────┬────────┘</span>
+                      <span class="d">│</span>
+             <span class="d">┌────────▼────────┐</span>
+             <span class="d">│</span>    <span class="b">munu_cli</span>     <span class="d">│</span>
+             <span class="d">│ compile · run · node  │</span>
+             <span class="d">└─────────────────┘</span></pre>
         </div>
       </div>
     </div>
@@ -312,7 +315,7 @@
         <h2>Repositories</h2>
 
         <div class="repo-grid">
-          <a class="repo" href="#">
+          <a class="repo" href="https://github.com/munu-systems/munu">
             <div class="repo-head">
               <span class="repo-name">
                 <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.49c-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.5 7.5 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
@@ -320,68 +323,32 @@
               </span>
               <span class="status">Active</span>
             </div>
-            <p>The Munu compiler, type checker, and CLI. Parses <code style="color:var(--accent);font-family:'Geist Mono';">.uv</code> source, verifies contracts, and emits bytecode for all three targets.</p>
-            <div class="tags"><span class="tag">compiler</span><span class="tag">type-system</span><span class="tag">cli</span></div>
+            <p>The Munu monorepo — compiler, no_std kernel, 36-opcode ISA, datom store, and CLI. Parses <code style="color:var(--accent);font-family:'Geist Mono';">.uv</code> source, verifies contracts, and steps bytecode on the dataflow VM.</p>
+            <div class="tags"><span class="tag">compiler</span><span class="tag">kernel</span><span class="tag">no_std</span><span class="tag">cli</span></div>
           </a>
 
-          <a class="repo" href="#">
+          <a class="repo" href="https://github.com/munu-systems/inferris">
             <div class="repo-head">
               <span class="repo-name">
                 <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.49c-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.5 7.5 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-                kernel
+                inferris
               </span>
-              <span class="status">Active</span>
+              <span class="status planned">Coming Soon</span>
             </div>
-            <p>The Munu runtime kernel — a pure Rust VM that steps contracts by binding dataflow variables. No scheduler, no GC, no OS dependency.</p>
-            <div class="tags"><span class="tag">runtime</span><span class="tag">vm</span><span class="tag">no_std</span></div>
+            <p>Native inference engine for DeepSeek V4 Flash on Apple Silicon. Model loading, KV cache, quantization, and Metal GPU compute — as a pure Rust library with no HTTP server.</p>
+            <div class="tags"><span class="tag">inference</span><span class="tag">metal</span><span class="tag">apple-silicon</span></div>
           </a>
 
-          <a class="repo" href="#">
+          <a class="repo" href="https://github.com/munu-systems/munu-code">
             <div class="repo-head">
               <span class="repo-name">
                 <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.49c-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.5 7.5 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-                blackframe
+                munu-code
               </span>
-              <span class="status">Active</span>
+              <span class="status planned">Coming Soon</span>
             </div>
-            <p>Fixed 1024-byte encrypted frame protocol for distributed contract communication. ChaCha20-Poly1305 encryption, hyperbolic routing on the Poincaré disk.</p>
-            <div class="tags"><span class="tag">networking</span><span class="tag">crypto</span><span class="tag">distributed</span></div>
-          </a>
-
-          <a class="repo" href="#">
-            <div class="repo-head">
-              <span class="repo-name">
-                <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.49c-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.5 7.5 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-                datalog
-              </span>
-              <span class="status">Active</span>
-            </div>
-            <p>Embedded Datalog engine with EAVT indexing, BLAKE2b content addressing, and ψ-term values. Powers contract-local fact stores and rule evaluation.</p>
-            <div class="tags"><span class="tag">database</span><span class="tag">logic</span><span class="tag">lattice</span></div>
-          </a>
-
-          <a class="repo" href="#">
-            <div class="repo-head">
-              <span class="repo-name">
-                <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.49c-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.5 7.5 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-                wasi-host
-              </span>
-              <span class="status progress">In Progress</span>
-            </div>
-            <p>WASI host implementation for running Munu contracts in WebAssembly environments — browsers, CDN workers, and standalone runtimes.</p>
-            <div class="tags"><span class="tag">wasm</span><span class="tag">wasi</span><span class="tag">host</span></div>
-          </a>
-
-          <a class="repo" href="#">
-            <div class="repo-head">
-              <span class="repo-name">
-                <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.49c-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.5 7.5 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-                munu-lsp
-              </span>
-              <span class="status progress">In Progress</span>
-            </div>
-            <p>Language Server Protocol implementation for Munu. Provides diagnostics, completions, go-to-definition, and contract obligation hints in your editor.</p>
-            <div class="tags"><span class="tag">tooling</span><span class="tag">lsp</span><span class="tag">editor</span></div>
+            <p>Conversational development environment built on the Munu kernel. Every component — LLM sessions, file stores, conversation loop — is a supervised contract with behaviour formulas and coalgebra enforcement.</p>
+            <div class="tags"><span class="tag">agent</span><span class="tag">kernel</span><span class="tag">dev-tools</span></div>
           </a>
         </div>
       </div>
@@ -396,16 +363,15 @@
 
         <div class="contrib-grid">
           <div>
-            <p>Munu is MIT-licensed and welcomes contributions. Each repository has its own <code>CONTRIBUTING.md</code> with build instructions, test commands, and style guidelines.</p>
-            <p>The best way to start is to pick a <code>good-first-issue</code> label in any repository, or join the Zulip chat and ask what needs attention.</p>
+            <p>Munu is MPL-2.0-licensed and welcomes contributions. The monorepo has build instructions, test commands, and style guidelines in the project root.</p>
+            <p>The best way to start is to pick a <code>good-first-issue</code> label, or open a discussion on GitHub.</p>
           </div>
 
           <div class="quicklinks">
             <div class="ql-label">Quick Links</div>
             <ul>
-              <li><a href="#">Good first issues</a></li>
-              <li><a href="#">Contributing guide</a></li>
-              <li><a href="#">Zulip chat (#munu)</a></li>
+              <li><a href="https://github.com/munu-systems/munu/issues">Issues</a></li>
+              <li><a href="https://github.com/munu-systems/munu/discussions">Discussions</a></li>
               <li><a href="#roadmap">Roadmap</a></li>
             </ul>
           </div>
@@ -420,44 +386,14 @@
       <div class="inner">
         <h2>Roadmap</h2>
 
-        <ul class="roadmap-list">
-          <li class="road-item shipped">
-            <span class="dot"></span>
-            <span class="ver">v0.1</span>
-            <span class="label">Core compiler + native target</span>
-            <span></span>
-          </li>
-          <li class="road-item shipped">
-            <span class="dot"></span>
-            <span class="ver">v0.2</span>
-            <span class="label">WASM target + WASI host</span>
-            <span></span>
-          </li>
-          <li class="road-item current">
-            <span class="dot"></span>
-            <span class="ver">v0.3</span>
-            <span class="label">Datalog integration + fact stores</span>
-            <span class="badge">Current</span>
-          </li>
-          <li class="road-item">
-            <span class="dot"></span>
-            <span class="ver">v0.4</span>
-            <span class="label">BlackFrame networking + distribution</span>
-            <span></span>
-          </li>
-          <li class="road-item">
-            <span class="dot"></span>
-            <span class="ver">v0.5</span>
-            <span class="label">MCU target + no_std kernel</span>
-            <span></span>
-          </li>
-          <li class="road-item">
-            <span class="dot"></span>
-            <span class="ver">v1.0</span>
-            <span class="label">Stable language spec + LSP</span>
-            <span></span>
-          </li>
-        </ul>
+        <p style="color: var(--text-mute); font-size: 16px; line-height: 1.6; margin-bottom: 36px;">Munu is under active development. The compiler, kernel, and toolchain will be published soon. Follow the repository for updates.</p>
+
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <a class="btn btn-secondary" href="https://github.com/munu-systems/munu">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+            Watch on GitHub
+          </a>
+        </div>
       </div>
     </div>
   </section>

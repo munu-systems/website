@@ -35,9 +35,9 @@
     return '<footer class="site-footer">' +
       '<div class="container">' +
         '<div class="footer-stats">' +
-          '<div class="footer-stat"><div class="label">License</div><div class="value">MIT</div></div>' +
+          '<div class="footer-stat"><div class="label">License</div><div class="value">MPL-2.0</div></div>' +
           '<div class="footer-stat"><div class="label">Implementation</div><div class="value">Rust</div></div>' +
-          '<div class="footer-stat"><div class="label">Targets</div><div class="value">MCU · WASM · Native</div></div>' +
+          '<div class="footer-stat"><div class="label">Kernel</div><div class="value">no_std · 36 opcodes</div></div>' +
           '<div class="footer-stat"><div class="label">Type System</div><div class="value">ψ-lattice</div></div>' +
         '</div>' +
         '<div class="footer-grid">' +
@@ -57,24 +57,22 @@
           '<div class="footer-col">' +
             '<h4>Projects</h4>' +
             '<ul>' +
-              '<li><a href="ecosystem.html#compiler">Munu Compiler</a></li>' +
-              '<li><a href="ecosystem.html#blackframe">BlackFrame</a></li>' +
-              '<li><a href="ecosystem.html#kernel">Kernel VM</a></li>' +
-              '<li><a href="ecosystem.html#datalog">Datalog Engine</a></li>' +
+              '<li><a href="https://github.com/munu-systems/munu">Munu</a></li>' +
+              '<li><a href="https://github.com/munu-systems/inferris">Inferris</a></li>' +
+              '<li><a href="https://github.com/munu-systems/munu-code">Munu Code</a></li>' +
             '</ul>' +
           '</div>' +
           '<div class="footer-col">' +
             '<h4>Community</h4>' +
             '<ul>' +
               '<li><a href="https://github.com/munu-systems">GitHub Org</a></li>' +
-              '<li><a href="#">Zulip Chat</a></li>' +
+              '<li><a href="https://github.com/munu-systems/munu/discussions">Discussions</a></li>' +
               '<li><a href="blog.html">Blog</a></li>' +
-              '<li><a href="#">RFC Process</a></li>' +
             '</ul>' +
           '</div>' +
         '</div>' +
         '<div class="footer-bottom">' +
-          '<span>MIT LICENSE · 2024–2026</span>' +
+          '<span>MPL-2.0 LICENSE · 2024–2026</span>' +
           '<span>µF → A · B → νG</span>' +
         '</div>' +
       '</div>' +

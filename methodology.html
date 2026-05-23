@@ -553,7 +553,7 @@
           <div class="chapter" id="diagnostics">
             <div class="chapter-num">§ 05 — LLM Diagnostics</div>
             <h2>Errors written for the <span class="accent">LLMs</span>, not the human.</h2>
-            <p>The compiler is the first reader; the LLMs are the second; the human, when they choose to look, is the third. Every diagnostic is a JSON envelope with the failing constraint, the relevant positions in the AST, a candidate-fix vector, and the smallest counter-example that violates subsumption.</p>
+            <p>The compiler is the first reader; the LLMs are the second; the human, when they choose to look, is the third. Every diagnostic emits a structured envelope with the failing constraint, the relevant positions in the AST, a candidate-fix vector, and the smallest counter-example that violates subsumption.</p>
             <p>This is the language-level invariant that makes Munu an <strong>AI harness</strong>: the models never have to guess what the compiler meant — the constraint and a witness for its violation are both addressable terms.</p>
 
             <div class="grid-2 mt-32">

@@ -261,33 +261,13 @@
 
         <div class="opt">
           <div class="opt-head">
-            <span class="opt-num">Option 1</span>
-            <span class="opt-label"><span class="em">—</span> Install script <span style="color:var(--text-dim);">(recommended)</span></span>
+            <span class="opt-num">Build from source</span>
+            <span class="opt-label"><span class="em">—</span> requires Rust 1.75+</span>
           </div>
-<pre><span class="cmd-line">curl -sSL munu.dev/install | sh</span></pre>
-        </div>
-
-        <div class="opt">
-          <div class="opt-head">
-            <span class="opt-num">Option 2</span>
-            <span class="opt-label"><span class="em">—</span> Build from source</span>
-          </div>
-<pre><span class="com"># requires Rust 1.75+</span>
-git clone https://github.com/munu-systems/munu.git
+<pre>git clone https://github.com/munu-systems/munu.git
 cd munu
-cargo build --release
-cargo install --path crates/munu-cli</pre>
+cargo build --release</pre>
         </div>
-
-        <div class="opt">
-          <div class="opt-head">
-            <span class="opt-num">Option 3</span>
-            <span class="opt-label"><span class="em">—</span> Cargo install</span>
-          </div>
-<pre><span class="cmd-line">cargo install munu-cli</span></pre>
-        </div>
-
-        <div class="verify-line">Verify your installation: <code>munu --version</code></div>
       </div>
     </div>
   </section>
@@ -301,60 +281,37 @@ cargo install --path crates/munu-cli</pre>
         <div class="opt">
           <div class="opt-head">
             <span class="opt-num">01</span>
-            <span class="opt-label">Create a new project</span>
+            <span class="opt-label">Write a contract</span>
           </div>
-<pre>munu new hello-world
-cd hello-world</pre>
+<pre><span class="com">// hello.uv</span>
+<span class="kw">mu</span> <span class="fn">greet</span><span class="pn">(</span>msg<span class="pn">:</span> Msg<span class="pn">)</span> <span class="pn">-&gt;</span> Msg <span class="pn">{</span>
+  msg <span class="pn">=&gt;</span> msg
+<span class="pn">}</span>
+
+<span class="kw">pub contract</span> <span class="fn">Hello</span><span class="pn">(</span>msg<span class="pn">:</span> Msg<span class="pn">)</span> <span class="pn">-&gt;</span> <span class="pn">[</span>Msg<span class="pn">]</span>
+    <span class="kw">behaviour</span> <span class="pn">{</span>
+        <span class="kw">do:</span> <span class="kw">nu</span> X<span class="pn">.</span> <span class="pn">[</span>_<span class="pn">]</span> X
+        <span class="kw">must:</span> <span class="kw">true</span>
+    <span class="pn">}</span>
+<span class="pn">{</span> greet<span class="pn">(</span>msg<span class="pn">)</span> <span class="pn">}</span></pre>
         </div>
 
         <div class="opt">
           <div class="opt-head">
             <span class="opt-num">02</span>
-            <span class="opt-label">Project structure</span>
+            <span class="opt-label">Compile it</span>
           </div>
-<pre><span class="com"># generated project layout</span>
-hello-world/
-├── munu.toml         <span class="com"># project manifest</span>
-├── src/
-│   └── main.uv       <span class="com"># entry contract</span>
-└── tests/
-    └── main_test.uv  <span class="com"># contract tests</span></pre>
+<pre><span class="com"># compile and print summary</span>
+munu compile hello.uv</pre>
         </div>
 
         <div class="opt">
           <div class="opt-head">
             <span class="opt-num">03</span>
-            <span class="opt-label">Write a contract</span>
-          </div>
-<pre><span class="com">// src/main.uv</span>
-<span class="kw">contract</span> <span class="fn">Hello</span> <span class="pn">{</span>
-  <span class="kw">do:</span> permanent<span class="pn">()</span>
-
-  <span class="kw">mu</span> <span class="fn">greet</span><span class="pn">(</span>name<span class="pn">:</span> <span class="kw">String</span><span class="pn">)</span> <span class="pn">-&gt;</span> <span class="kw">String</span>
-    <span class="kw">requires</span> name.len <span class="pn">&gt;</span> <span class="num">0</span>
-    <span class="kw">ensures</span>  <span class="pn">(</span>r<span class="pn">)</span> r.contains<span class="pn">(</span>name<span class="pn">)</span>
-  <span class="pn">{</span>
-    <span class="str">"Hello, "</span> <span class="pn">++</span> name <span class="pn">++</span> <span class="str">"!"</span>
-  <span class="pn">}</span>
-<span class="pn">}</span></pre>
-        </div>
-
-        <div class="opt">
-          <div class="opt-head">
-            <span class="opt-num">04</span>
             <span class="opt-label">Run it</span>
           </div>
-<pre><span class="com"># run natively</span>
-munu run
-
-<span class="com"># run as WASM</span>
-munu run --target=wasm
-
-<span class="com"># check types and contracts</span>
-munu check
-
-<span class="com"># run tests</span>
-munu test</pre>
+<pre><span class="com"># compile and run on the dataflow VM</span>
+munu run hello.uv</pre>
         </div>
       </div>
     </div>
@@ -365,26 +322,26 @@ munu test</pre>
     <div class="container">
       <div class="gs-section-inner">
         <h2>Deployment Targets</h2>
-        <p class="section-sub">Munu compiles to three targets from day one. The same contract, the same verification — different backends.</p>
+        <p class="section-sub">The kernel is <code style="color:var(--accent);font-family:'Geist Mono'">no_std</code> by design. The same bytecode runs anywhere the kernel can be embedded.</p>
 
         <div class="targets-grid">
-          <div class="target">
-            <div class="target-tag">native</div>
-            <h4>Native / Rust</h4>
-            <p>Compiles to a Rust crate. Embed in any Rust project or run standalone. Supports <code style="color:var(--accent);font-family:'Geist Mono'">no_std</code>.</p>
-<pre>munu build --target=native</pre>
-          </div>
           <div class="target active">
-            <div class="target-tag">wasm</div>
-            <h4>WebAssembly</h4>
-            <p>WASI or browser host. Module-per-contract with dead-code elimination.</p>
-<pre>munu build --target=wasm</pre>
+            <div class="target-tag">host</div>
+            <h4>Desktop / Server</h4>
+            <p>Compile and run directly with the CLI. Embed the kernel as a Rust crate in any project.</p>
+<pre>munu run hello.uv</pre>
           </div>
           <div class="target">
-            <div class="target-tag">mcu</div>
-            <h4>Microcontroller</h4>
-            <p>ARM Cortex-M0, RISC-V 32-bit. No heap, no OS, cooperative scheduling.</p>
-<pre>munu build --target=mcu:cortex-m0</pre>
+            <div class="target-tag">no_std</div>
+            <h4>Embedded</h4>
+            <p>The kernel requires no OS, no heap, no allocator. Cooperative scheduling on bare metal.</p>
+<pre>// kernel embeds as a no_std crate</pre>
+          </div>
+          <div class="target">
+            <div class="target-tag">node</div>
+            <h4>Distributed</h4>
+            <p>Boot a network node from a binary manifest. Ed25519 signed deployment cascades across peers.</p>
+<pre>munu node manifest.bin</pre>
           </div>
         </div>
       </div>
@@ -410,9 +367,9 @@ munu test</pre>
             <h4>Examples</h4>
             <p>Working contracts for common patterns: supervision, streaming, verification.</p>
           </a>
-          <a class="next-card" href="blog.html">
-            <h4>Join Zulip</h4>
-            <p>#munu — async, no rush. Ask questions, share counter-examples.</p>
+          <a class="next-card" href="https://github.com/munu-systems/munu/discussions">
+            <h4>Discussions</h4>
+            <p>Ask questions, share counter-examples, propose constraints.</p>
           </a>
         </div>
       </div>

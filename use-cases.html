@@ -209,19 +209,22 @@
             <span>agent.uv</span>
             <span></span>
           </div>
-<pre><span class="kw">contract</span> <span class="fn">Agent</span><span class="pn">(</span>tools<span class="pn">:</span> ToolSet<span class="pn">)</span> <span class="pn">{</span>
-  <span class="kw">must:</span> only_calls<span class="pn">(</span>tools.allowed<span class="pn">)</span>
-    <span class="kw">and</span> responds_within<span class="pn">(</span><span class="num">5s</span><span class="pn">)</span>
-    <span class="kw">and</span> output_satisfies<span class="pn">(</span>safety_filter<span class="pn">)</span>
+<pre><span class="kw">nu</span> <span class="fn">serve</span><span class="pn">(</span>requests<span class="pn">:</span> Stream<span class="pn">&lt;</span>Query<span class="pn">&gt;,</span> tools<span class="pn">:</span> ToolSet<span class="pn">)</span> <span class="pn">-&gt;</span> Result <span class="pn">{</span>
+    requests<span class="pn">,</span> tools <span class="pn">=&gt;</span> <span class="pn">{</span>
+        tools.call<span class="pn">(</span>requests.head<span class="pn">)</span>
+    <span class="pn">}</span>
+<span class="pn">}</span>
 
-  <span class="kw">do:</span> two_strikes<span class="pn">()</span>   <span class="com">// restart once, then escalate</span>
-
-  <span class="kw">nu</span> <span class="fn">serve</span><span class="pn">(</span>requests<span class="pn">:</span> <span class="kw">Stream</span><span class="pn">&lt;</span><span class="kw">Query</span><span class="pn">&gt;)</span> <span class="pn">{</span>
-    <span class="kw">let</span> result <span class="pn">=</span> tools.call<span class="pn">(</span>requests.head<span class="pn">)</span>
-    emit<span class="pn">(</span>result<span class="pn">)</span>
-    serve<span class="pn">(</span>requests.tail<span class="pn">)</span>
-  <span class="pn">}</span>
-<span class="pn">}</span></pre>
+<span class="kw">pub contract</span> <span class="fn">Agent</span><span class="pn">(</span>tools<span class="pn">:</span> ToolSet<span class="pn">)</span> <span class="pn">-&gt;</span> <span class="pn">[</span>Result<span class="pn">]</span>
+    <span class="kw">behaviour</span> <span class="pn">{</span>
+        <span class="com">// two strikes: restart once, then escalate</span>
+        <span class="kw">do:</span>
+            <span class="kw">nu</span> X<span class="pn">.</span> <span class="pn">[</span>fail<span class="pn">(</span><span class="kw">self</span><span class="pn">,</span> _<span class="pn">)]</span> <span class="pn">&lt;</span>restart<span class="pn">(</span><span class="kw">self</span><span class="pn">)&gt;</span>
+            <span class="kw">nu</span> Y<span class="pn">.</span> <span class="pn">[</span>fail<span class="pn">(</span><span class="kw">self</span><span class="pn">,</span> _<span class="pn">)]</span> <span class="kw">false</span>
+                 <span class="kw">and</span> <span class="pn">[</span>_<span class="pn">]</span> Y <span class="kw">and</span> <span class="pn">[</span>_<span class="pn">]</span> X
+        <span class="kw">must:</span> <span class="kw">true</span>
+    <span class="pn">}</span>
+<span class="pn">{</span> serve<span class="pn">(</span>requests<span class="pn">,</span> tools<span class="pn">)</span> <span class="pn">}</span></pre>
         </div>
       </div>
     </div>
@@ -263,26 +266,33 @@
             <span>sensor.uv · target=cortex-m0</span>
             <span></span>
           </div>
-<pre><span class="kw">contract</span> <span class="fn">SensorDriver</span><span class="pn">(</span>bus<span class="pn">:</span> I2C<span class="pn">)</span> <span class="pn">{</span>
-  <span class="kw">must:</span> responds_within<span class="pn">(</span><span class="num">10ms</span><span class="pn">)</span>
-    <span class="kw">and</span> never_blocks<span class="pn">(</span>bus<span class="pn">)</span>
+<pre><span class="kw">extern mu</span> <span class="fn">sensor_read</span><span class="pn">(</span>channel<span class="pn">:</span> u64<span class="pn">)</span> <span class="pn">-&gt;</span> u64<span class="pn">;</span>
 
-  <span class="kw">do:</span> permanent<span class="pn">()</span>   <span class="com">// always restart on failure</span>
+<span class="kw">mu</span> <span class="fn">read_temperature</span><span class="pn">(</span>channel<span class="pn">:</span> u64<span class="pn">)</span> <span class="pn">-&gt;</span> i64
+  <span class="kw">requires</span> channel <span class="pn">&gt;</span> <span class="num">0</span>
+  <span class="kw">ensures</span>  <span class="pn">(</span>t<span class="pn">)</span> t <span class="pn">&gt;=</span> <span class="num">-40</span> <span class="pn">&amp;&amp;</span> t <span class="pn">&lt;=</span> <span class="num">125</span>
+<span class="pn">{</span>
+  channel <span class="pn">=&gt;</span> sensor_read<span class="pn">(</span>channel<span class="pn">)</span>
+<span class="pn">}</span>
 
-  <span class="kw">mu</span> <span class="fn">read_temperature</span><span class="pn">()</span> <span class="pn">-&gt;</span> <span class="kw">i16</span>
-    <span class="kw">requires</span> bus.is_ready<span class="pn">()</span>
-    <span class="kw">ensures</span>  <span class="pn">(</span>t<span class="pn">)</span> t <span class="pn">&gt;=</span> <span class="num">-40</span> <span class="pn">&amp;&amp;</span> t <span class="pn">&lt;=</span> <span class="num">125</span>
-  <span class="pn">{</span>
-    <span class="kw">let</span> raw <span class="pn">=</span> bus.read_register<span class="pn">(</span><span class="num">0x00</span><span class="pn">,</span> <span class="num">2</span><span class="pn">)</span>
-    <span class="pn">(</span>raw<span class="pn">[</span><span class="num">0</span><span class="pn">]</span> <span class="pn">&lt;&lt;</span> <span class="num">8</span> <span class="pn">|</span> raw<span class="pn">[</span><span class="num">1</span><span class="pn">])</span> <span class="pn">/</span> <span class="num">256</span>
-  <span class="pn">}</span>
-<span class="pn">}</span></pre>
+<span class="kw">pub contract</span> <span class="fn">SensorDriver</span><span class="pn">(</span>channel<span class="pn">:</span> u64<span class="pn">)</span> <span class="pn">-&gt;</span> <span class="pn">[</span>u64<span class="pn">]</span>
+    <span class="kw">behaviour</span> <span class="pn">{</span>
+        <span class="kw">do:</span>
+            <span class="kw">nu</span> X<span class="pn">.</span>
+                <span class="pn">[</span>from<span class="pn">(</span><span class="kw">self</span><span class="pn">)]</span>
+                    <span class="pn">&lt;</span>to<span class="pn">(</span><span class="kw">self</span><span class="pn">)&gt;</span> <span class="kw">true</span>
+                <span class="kw">and</span> <span class="pn">[</span>fail<span class="pn">(</span><span class="kw">self</span><span class="pn">,</span> _<span class="pn">)]</span>
+                    <span class="pn">&lt;</span>restart<span class="pn">(</span><span class="kw">self</span><span class="pn">)&gt;</span> <span class="kw">true</span>
+                <span class="kw">and</span> <span class="pn">[</span>_<span class="pn">]</span> X
+        <span class="kw">must:</span> <span class="kw">true</span>
+    <span class="pn">}</span>
+<span class="pn">{</span> sensor_loop<span class="pn">(</span>channel<span class="pn">)</span> <span class="pn">}</span></pre>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 3 · DISTRIBUTED CONSENSUS -->
+  <!-- 3 · DISTRIBUTED DEPLOYMENT -->
   <section class="uc-section">
     <div class="container">
       <div class="uc-head">
@@ -295,50 +305,52 @@
           </svg>
         </div>
         <div class="uc-title">
-          <h2>Distributed Consensus</h2>
-          <p class="sub">BlackFrame protocol for trustless coordination</p>
+          <h2>Distributed Deployment</h2>
+          <p class="sub">Ed25519 signed bytecode cascading across nodes</p>
         </div>
       </div>
 
-      <p class="uc-desc">Contracts that span multiple nodes communicate via BlackFrame — a fixed-size encrypted frame protocol. Routing is greedy on the Poincaré disk. State convergence uses CRDTs backed by Datalog, ensuring monotone progress without coordination overhead.</p>
+      <p class="uc-desc">Node A deploys bytecode to node B; B deploys further down to C. Every hop verifies the Ed25519 signature chain. The wire format is BlackFrame — fixed 1024-byte, two-layer encrypted frames (ChaCha20-Poly1305 hop layer, X25519 forward secrecy on the E2E layer). Routing decisions are made by Munu contracts using greedy forwarding on the Poincar&eacute; disk; the kernel never touches the routing logic.</p>
 
       <div class="uc-body">
         <div class="why-block">
           <div class="why-label">Why Munu</div>
           <ul>
-            <li>Fixed 1024-byte frames eliminate framing attacks</li>
-            <li>Hyperbolic routing with O(log n) stretch</li>
-            <li>CRDT + Datalog for coordination-free convergence</li>
-            <li>Contract obligations enforced across network boundaries</li>
+            <li>Fixed 1024-byte frames with two-layer encryption (hop + E2E)</li>
+            <li>Ed25519 signature chain verifies every deployment hop</li>
+            <li>X25519 ephemeral key per message — forward secrecy by default</li>
+            <li>Single-assignment dataflow — no conflicts, no CRDTs needed</li>
           </ul>
         </div>
 
         <div class="code-window">
           <div class="code-window-head">
             <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-            <span>replica.uv</span>
+            <span>deployment · A → B → C</span>
             <span></span>
           </div>
-<pre><span class="kw">contract</span> <span class="fn">ReplicaNode</span><span class="pn">(</span>peers<span class="pn">:</span> <span class="kw">Set</span><span class="pn">&lt;</span>NodeId<span class="pn">&gt;)</span> <span class="pn">{</span>
-  <span class="kw">must:</span> converges_within<span class="pn">(</span>peers<span class="pn">,</span> <span class="num">30s</span><span class="pn">)</span>
-    <span class="kw">and</span> frame_size_eq<span class="pn">(</span><span class="num">1024</span><span class="pn">)</span>
+<pre><span class="com">// Wire format per hop:</span>
+<span class="com">//   module_hash (32 bytes)</span>
+<span class="com">//   name_len   (1 byte)</span>
+<span class="com">//   name       (UTF-8, up to 255 bytes)</span>
+<span class="com">//   signature  (64 bytes, Ed25519)</span>
 
-  <span class="kw">do:</span> permanent<span class="pn">()</span>
-
-  <span class="kw">nu</span> <span class="fn">replicate</span><span class="pn">(</span>events<span class="pn">:</span> <span class="kw">Stream</span><span class="pn">&lt;</span>Event<span class="pn">&gt;)</span> <span class="pn">{</span>
-    <span class="kw">let</span> frame <span class="pn">=</span> BlackFrame<span class="pn">::</span>seal<span class="pn">(</span>events.head<span class="pn">)</span>
-    <span class="kw">for</span> peer <span class="kw">in</span> peers <span class="pn">{</span>
-      route<span class="pn">(</span>frame<span class="pn">,</span> peer.coordinates<span class="pn">)</span>
-    <span class="pn">}</span>
-    replicate<span class="pn">(</span>events.tail<span class="pn">)</span>
-  <span class="pn">}</span>
-<span class="pn">}</span></pre>
+<span class="com">// BlackFrame: 1024 bytes total</span>
+<span class="com">//   hop_nonce (12) + hop_ct (1012)</span>
+<span class="com">//     → ChaCha20-Poly1305 over HopPlaintext</span>
+<span class="com">//       version (1) + ttl (1)</span>
+<span class="com">//       + coord_hint (8, blake2b of angle)</span>
+<span class="com">//       + inner_ephemeral (32, X25519)</span>
+<span class="com">//       + inner_nonce (12)</span>
+<span class="com">//       + inner_ct (942)</span>
+<span class="com">//         → ChaCha20-Poly1305 E2E</span>
+<span class="com">//           payload (885 bytes)</span></pre>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 4 · EDGE COMPUTING -->
+  <!-- 4 · EDGE & IOT -->
   <section class="uc-section">
     <div class="container">
       <div class="uc-head">
@@ -352,45 +364,50 @@
           </svg>
         </div>
         <div class="uc-title">
-          <h2>Edge Computing</h2>
-          <p class="sub">WASM contracts in browsers and CDN workers</p>
+          <h2>Edge &amp; IoT</h2>
+          <p class="sub">The no_std kernel runs on MCUs, in WASM, and on servers</p>
         </div>
       </div>
 
-      <p class="uc-desc">Munu contracts compile to WebAssembly with zero runtime dependencies. Deploy the same verified logic to Cloudflare Workers, Deno Deploy, or a browser tab. The WASI host provides I/O — the contract never touches the network directly.</p>
+      <p class="uc-desc">IoT devices run untrusted code on untrusted networks. Munu solves both problems at once: the <code>no_std</code> kernel runs verified contracts on bare-metal MCUs, and every byte on the wire is inside a BlackFrame — two-layer encrypted, Ed25519 signed, fixed-size. There is no "configure TLS" step, no certificate authority, no handshake protocol to get wrong. A sensor node and a server run the same kernel, the same bytecode, and the same cryptographic guarantees. Trusted computing from the MCU to the cloud.</p>
 
       <div class="uc-body">
         <div class="why-block">
           <div class="why-label">Why Munu</div>
           <ul>
-            <li>Sub-millisecond cold starts — no interpreter warmup</li>
-            <li>Same contract runs in browser, CDN edge, and server</li>
-            <li>Sandboxed by WASM — no memory safety concerns</li>
-            <li>Module-per-contract with aggressive dead-code elimination</li>
+            <li>Security built into the wire — BlackFrame encryption on every hop</li>
+            <li>Same verified bytecode on Cortex-M0, in WASM, and on a server</li>
+            <li>No TLS, no certificates, no handshake — Ed25519 identity from the seed</li>
+            <li>Kernel is <code>no_std</code> — no heap, no OS, cooperative scheduling</li>
           </ul>
         </div>
 
         <div class="code-window">
           <div class="code-window-head">
             <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-            <span>edge.uv · target=wasm</span>
+            <span>sensor_pair.uv</span>
             <span></span>
           </div>
-<pre><span class="kw">contract</span> <span class="fn">EdgeValidator</span><span class="pn">(</span>config<span class="pn">:</span> Config<span class="pn">)</span> <span class="pn">{</span>
-  <span class="kw">must:</span> latency_p99_under<span class="pn">(</span><span class="num">5ms</span><span class="pn">)</span>
-    <span class="kw">and</span> memory_under<span class="pn">(</span><span class="num">128kb</span><span class="pn">)</span>
+<pre><span class="com">// Same contract runs on MCU, WASM, and server.</span>
+<span class="com">// Only the extern changes per platform.</span>
+<span class="kw">extern mu</span> <span class="fn">sensor_read</span><span class="pn">(</span>channel<span class="pn">:</span> u64<span class="pn">)</span> <span class="pn">-&gt;</span> u64<span class="pn">;</span>
 
-  <span class="kw">do:</span> permanent<span class="pn">()</span>
+<span class="kw">nu</span> <span class="fn">sensor_loop</span><span class="pn">(</span>channel<span class="pn">:</span> u64<span class="pn">)</span> <span class="pn">-&gt;</span> u64 <span class="pn">{</span>
+    channel <span class="pn">=&gt;</span> sensor_read<span class="pn">(</span>channel<span class="pn">)</span>
+<span class="pn">}</span>
 
-  <span class="kw">mu</span> <span class="fn">validate_request</span><span class="pn">(</span>req<span class="pn">:</span> HttpRequest<span class="pn">)</span> <span class="pn">-&gt;</span> Response
-    <span class="kw">requires</span> req.body.len <span class="pn">&lt;=</span> config.max_body
-    <span class="kw">ensures</span>  <span class="pn">(</span>r<span class="pn">)</span> r.status <span class="pn">&lt;</span> <span class="num">500</span>
-  <span class="pn">{</span>
-    <span class="kw">let</span> parsed <span class="pn">=</span> parse_json<span class="pn">(</span>req.body<span class="pn">)</span><span class="pn">?</span>
-    <span class="kw">let</span> checked <span class="pn">=</span> schema_check<span class="pn">(</span>parsed<span class="pn">,</span> config.schema<span class="pn">)</span>
-    Response<span class="pn">::</span>ok<span class="pn">(</span>checked<span class="pn">)</span>
-  <span class="pn">}</span>
-<span class="pn">}</span></pre>
+<span class="kw">pub contract</span> <span class="fn">SensorPair</span><span class="pn">(</span>channel<span class="pn">:</span> u64<span class="pn">)</span> <span class="pn">-&gt;</span> <span class="pn">[</span>u64<span class="pn">]</span>
+    <span class="kw">behaviour</span> <span class="pn">{</span>
+        <span class="kw">do:</span>
+            <span class="kw">nu</span> X<span class="pn">.</span>
+                <span class="pn">[</span>from<span class="pn">(</span><span class="kw">self</span><span class="pn">)]</span>
+                    <span class="pn">&lt;</span>to<span class="pn">(</span><span class="kw">self</span><span class="pn">)&gt;</span> <span class="kw">true</span>
+                <span class="kw">and</span> <span class="pn">[</span>fail<span class="pn">(</span><span class="kw">self</span><span class="pn">,</span> _<span class="pn">)]</span>
+                    <span class="pn">&lt;</span>restart<span class="pn">(</span><span class="kw">self</span><span class="pn">)&gt;</span> <span class="kw">true</span>
+                <span class="kw">and</span> <span class="pn">[</span>_<span class="pn">]</span> X
+        <span class="kw">must:</span> <span class="kw">true</span>
+    <span class="pn">}</span>
+<span class="pn">{</span> sensor_loop<span class="pn">(</span>channel<span class="pn">)</span> <span class="pn">}</span></pre>
         </div>
       </div>
     </div>
@@ -431,21 +448,21 @@
             <span>search.uv</span>
             <span></span>
           </div>
-<pre><span class="kw">mu</span> <span class="fn">binary_search</span><span class="pn">(</span>arr<span class="pn">:</span> <span class="pn">&amp;[</span><span class="kw">i64</span><span class="pn">]</span><span class="pn">,</span> target<span class="pn">:</span> <span class="kw">i64</span><span class="pn">)</span> <span class="pn">-&gt;</span> <span class="kw">Option</span><span class="pn">&lt;</span><span class="kw">usize</span><span class="pn">&gt;</span>
-  <span class="kw">requires</span> arr.is_sorted<span class="pn">()</span>
-  <span class="kw">ensures</span>  <span class="pn">(</span>r<span class="pn">)</span> <span class="kw">match</span> r <span class="pn">{</span>
-    Some<span class="pn">(</span>i<span class="pn">)</span> <span class="pn">=&gt;</span> arr<span class="pn">[</span>i<span class="pn">]</span> <span class="pn">==</span> target<span class="pn">,</span>
-    None    <span class="pn">=&gt;</span> <span class="pn">!</span>arr.contains<span class="pn">(</span>target<span class="pn">)</span>
-  <span class="pn">}</span>
-  <span class="kw">decreases</span> arr.len
+<pre><span class="kw">mu</span> <span class="fn">count_periods</span><span class="pn">(</span>n<span class="pn">:</span> u64<span class="pn">)</span> <span class="pn">-&gt;</span> u64
+  <span class="kw">requires</span> n <span class="pn">&gt;</span> <span class="num">0</span> <span class="pn">&amp;&amp;</span> n <span class="pn">&lt;</span> <span class="num">1000</span>
+  <span class="kw">ensures</span>  <span class="pn">(</span>r<span class="pn">)</span> r <span class="pn">&gt;=</span> <span class="num">1</span> <span class="pn">&amp;&amp;</span> r <span class="pn">&lt;=</span> n
+  <span class="kw">decreases</span> n
 <span class="pn">{</span>
-  <span class="kw">if</span> arr.is_empty<span class="pn">()</span> <span class="pn">{</span> <span class="kw">return</span> None <span class="pn">}</span>
-  <span class="kw">let</span> mid <span class="pn">=</span> arr.len <span class="pn">/</span> <span class="num">2</span>
-  <span class="kw">match</span> arr<span class="pn">[</span>mid<span class="pn">].</span>cmp<span class="pn">(</span>target<span class="pn">)</span> <span class="pn">{</span>
-    Equal   <span class="pn">=&gt;</span> Some<span class="pn">(</span>mid<span class="pn">),</span>
-    Less    <span class="pn">=&gt;</span> binary_search<span class="pn">(&amp;</span>arr<span class="pn">[</span>mid<span class="pn">+</span><span class="num">1</span><span class="pn">..],</span> target<span class="pn">),</span>
-    Greater <span class="pn">=&gt;</span> binary_search<span class="pn">(&amp;</span>arr<span class="pn">[..</span>mid<span class="pn">],</span> target<span class="pn">),</span>
-  <span class="pn">}</span>
+  <span class="num">1</span> <span class="pn">=&gt;</span> <span class="num">1</span>
+  n <span class="pn">=&gt;</span> <span class="num">1</span> <span class="pn">+</span> count_periods<span class="pn">(</span>n <span class="pn">-</span> <span class="num">1</span><span class="pn">)</span>
+<span class="pn">}</span>
+
+<span class="kw">mu</span> <span class="fn">calculate_interest</span><span class="pn">(</span>principal<span class="pn">:</span> i64<span class="pn">,</span> rate<span class="pn">:</span> i64<span class="pn">,</span> periods<span class="pn">:</span> i64<span class="pn">)</span> <span class="pn">-&gt;</span> i64
+  <span class="kw">requires</span> principal <span class="pn">&gt;</span> <span class="num">99</span> <span class="pn">&amp;&amp;</span> rate <span class="pn">&gt;</span> <span class="num">0</span> <span class="pn">&amp;&amp;</span> periods <span class="pn">&gt;</span> <span class="num">0</span>
+  <span class="kw">ensures</span>  <span class="pn">(</span>r<span class="pn">)</span> r <span class="pn">&gt;</span> <span class="num">0</span>
+<span class="pn">{</span>
+  principal<span class="pn">,</span> rate<span class="pn">,</span> periods <span class="pn">=&gt;</span>
+    principal <span class="pn">*</span> rate <span class="pn">*</span> periods <span class="pn">/</span> <span class="num">100</span>
 <span class="pn">}</span></pre>
         </div>
       </div>

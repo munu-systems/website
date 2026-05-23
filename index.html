@@ -294,24 +294,23 @@
             <span>gate.uv</span>
             <span></span>
           </div>
-<pre><span class="com">// A supervised gate contract</span>
-<span class="kw">contract</span> <span class="fn">Gate</span><span class="pn">(</span>input<span class="pn">:</span> <span class="kw">Stream</span><span class="pn">&lt;</span><span class="kw">Frame</span><span class="pn">&gt;)</span> <span class="pn">{</span>
-  <span class="kw">do:</span>   permanent<span class="pn">()</span>
-  <span class="kw">must:</span> responds_within<span class="pn">(</span><span class="num">100ms</span><span class="pn">)</span>
+<pre><span class="kw">mu</span> <span class="fn">validate</span><span class="pn">(</span>frame<span class="pn">:</span> Frame<span class="pn">)</span> <span class="pn">-&gt;</span> Result
+  <span class="kw">requires</span> frame.len <span class="pn">&lt;=</span> <span class="num">1024</span>
+  <span class="kw">ensures</span>  <span class="pn">(</span>r<span class="pn">)</span> r.is_ok<span class="pn">()</span> <span class="pn">=&gt;</span> frame.checksum_valid<span class="pn">()</span>
+  <span class="kw">decreases</span> frame.ttl
+<span class="pn">{</span>
+  frame <span class="pn">=&gt;</span> check<span class="pn">(</span>frame<span class="pn">)</span>
+<span class="pn">}</span>
 
-  <span class="kw">mu</span> <span class="fn">validate</span><span class="pn">(</span>frame<span class="pn">:</span> <span class="kw">Frame</span><span class="pn">)</span> <span class="pn">-&gt;</span> <span class="kw">Result</span> <span class="pn">{</span>
-    <span class="kw">requires</span> frame.len <span class="pn">&lt;=</span> <span class="num">1024</span>
-    <span class="kw">ensures</span>  <span class="pn">(</span>r<span class="pn">)</span> r.is_ok<span class="pn">()</span> <span class="pn">=&gt;</span> frame.checksum_valid<span class="pn">()</span>
-    <span class="kw">decreases</span> frame.ttl
-    ...
-  <span class="pn">}</span>
-
-  <span class="kw">nu</span> <span class="fn">forward</span><span class="pn">(</span>validated<span class="pn">:</span> <span class="kw">Stream</span><span class="pn">&lt;</span><span class="kw">Frame</span><span class="pn">&gt;)</span> <span class="pn">{</span>
-    <span class="com">// coinductive: observe forever</span>
-    route<span class="pn">(</span>validated.head<span class="pn">)</span> <span class="pn">|&gt;</span> emit
-    forward<span class="pn">(</span>validated.tail<span class="pn">)</span>
-  <span class="pn">}</span>
-<span class="pn">}</span></pre>
+<span class="kw">pub contract</span> <span class="fn">Gate</span><span class="pn">(</span>input<span class="pn">:</span> Stream<span class="pn">&lt;</span>Frame<span class="pn">&gt;)</span> <span class="pn">-&gt;</span> <span class="pn">[</span>Frame<span class="pn">]</span>
+    <span class="kw">behaviour</span> <span class="pn">{</span>
+        <span class="kw">do:</span>
+            <span class="kw">nu</span> X<span class="pn">.</span>
+                <span class="pn">[</span>fail<span class="pn">(</span><span class="kw">self</span><span class="pn">,</span> _<span class="pn">)]</span> <span class="pn">&lt;</span>restart<span class="pn">(</span><span class="kw">self</span><span class="pn">)&gt;</span> <span class="kw">true</span>
+                <span class="kw">and</span> <span class="pn">[</span>_<span class="pn">]</span> X
+        <span class="kw">must:</span> <span class="kw">true</span>
+    <span class="pn">}</span>
+<span class="pn">{</span> validate<span class="pn">(</span>input<span class="pn">)</span> <span class="pn">|&gt;</span> forward <span class="pn">}</span></pre>
         </div>
       </div>
     </div>
@@ -343,15 +342,15 @@
           <div class="uc-icon">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a13 13 0 0 1 0 18M12 3a13 13 0 0 0 0 18"/></svg>
           </div>
-          <h4>Distributed Networks</h4>
-          <p>BlackFrame protocol for trustless coordination</p>
+          <h4>Distributed Deployment</h4>
+          <p>Ed25519 signed bytecode over BlackFrame</p>
         </div>
         <div class="uc-card">
           <div class="uc-icon">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7h16M4 12h16M4 17h10"/><circle cx="19" cy="17" r="2"/></svg>
           </div>
-          <h4>Edge &amp; Codegen</h4>
-          <p>WASM contracts in browsers and CDN workers</p>
+          <h4>Edge &amp; IoT</h4>
+          <p>no_std kernel on MCUs, in WASM, and on servers</p>
         </div>
       </div>
 
