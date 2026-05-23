@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Munu — A Programming Language &amp; AI Harness Built for the LLMs</title>
+<title>Munu — Build. Prove. Observe.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -157,12 +157,10 @@
 
   <section class="hero">
     <div class="container">
-      <div class="eyebrow center fade-up">A Programming Language &amp; AI Harness for the LLMs</div>
+      <div class="eyebrow center fade-up">Build. Prove. Observe.</div>
       <h1 class="wordmark fade-up d1"><span class="mu">mu</span><span class="nu">nu</span></h1>
       <p class="lede fade-up d2">
-        Munu is the first language designed with the <strong>LLMs as first-class readers</strong>.
-        Errors are structured for machines. Contracts are the harness that holds AI agents to
-        their obligations — proven at build time, observed at runtime.
+        A programming language and harness built for LLMs to read, write, and prove correct.
       </p>
       <div class="cta-row fade-up d3">
         <a class="btn btn-primary" href="get-started.html">
@@ -183,32 +181,49 @@
   <section class="features-section">
     <div class="container">
       <div class="eyebrow" style="justify-content:center; display:flex;">Why Munu</div>
-      <h2>The language LLMs can <span class="accent">actually drive</span>.</h2>
-      <p class="lede">Every property models need — structure, proof, supervision — promoted from convention to construct. The kernel only steps bytecode; the rest lives in source the model can read.</p>
+      <h2>LLMs have blind spots. Munu <span class="accent">closes them</span>.</h2>
+      <p class="lede">Every weakness that makes LLM-generated code dangerous has a language-level mitigation. Not a linter. Not a convention. A construct the compiler enforces.</p>
 
-      <div class="grid-3">
+      <div class="grid-2" style="margin-top: 48px;">
         <div class="card">
-          <div class="icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg>
-          </div>
-          <h3>Formal Verification</h3>
-          <p>Contracts carry <code>requires</code>, <code>ensures</code>, and <code>decreases</code> clauses. The compiler proves them at build time — no runtime checks, no test suites hoping for coverage.</p>
+          <h3>Hallucination</h3>
+          <p><code>requires</code>/<code>ensures</code> prove correctness at compile time. The LLM can hallucinate — the contract won't verify.</p>
         </div>
-
         <div class="card">
-          <div class="icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="3"/></svg>
-          </div>
-          <h3>LLM-First Diagnostics</h3>
-          <p>Every error is a JSON envelope: failing constraint, AST positions, candidate-fix vector, smallest counter-example. The compiler is the first reader; the LLMs are the second; the human, when they choose to look, is the third.</p>
+          <h3>Long-range dependencies</h3>
+          <p>Contracts carry their obligations inline. No chasing through files — the spec, the proof, and the recovery are one construct.</p>
         </div>
-
         <div class="card">
-          <div class="icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="2"/></svg>
-          </div>
-          <h3>Agent Harness, Not Library</h3>
-          <p>Supervision trees are first-class. <code>do:</code> handles local failure; <code>must:</code> enforces obligations to the parent. Model tool-use becomes a contract — and the contract is the substrate the kernel runs.</p>
+          <h3>Arithmetic errors</h3>
+          <p>LLMs still trip on routine calculations. In munu-code the LLM doesn't simulate the answer — it writes a mu function, runs it on the kernel, and gets the exact result. The language is the calculator.</p>
+        </div>
+        <div class="card">
+          <h3>Termination</h3>
+          <p><code>decreases</code> proves the recursion terminates. No infinite loop survives compilation.</p>
+        </div>
+        <div class="card">
+          <h3>Mutation tracking</h3>
+          <p>Variables bind once. No reassignment, no temporal state, nothing for the LLM to simulate step-by-step.</p>
+        </div>
+        <div class="card">
+          <h3>Concurrency</h3>
+          <p>Dataflow variables have a 6-state lifecycle enforced by the kernel. Reads block until bound. There is no race to reason about.</p>
+        </div>
+        <div class="card">
+          <h3>Implicit invariants</h3>
+          <p>The <code>behaviour</code> clause <em>is</em> the invariant. It compiles to a Mealy table the kernel enforces. Not a comment. Not a convention. Not optional.</p>
+        </div>
+        <div class="card">
+          <h3>Ambiguous errors</h3>
+          <p>The diagnostic is a structured envelope: failing constraint, AST position, counter-example, candidate fixes. The LLM applies the fix — it doesn't interpret prose.</p>
+        </div>
+        <div class="card">
+          <h3>Overconfidence</h3>
+          <p>Confidence is irrelevant. The compiler proves or rejects. There is no "looks right."</p>
+        </div>
+        <div class="card">
+          <h3>Type confusion</h3>
+          <p>Types are ordered by subsumption (⊑) on a lattice. The compiler catches contradictions the LLM will never notice — because the LLM doesn't do lattice arithmetic.</p>
         </div>
       </div>
     </div>
