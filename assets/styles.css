@@ -81,7 +81,7 @@ code, pre, .mono {
   z-index: 50;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  background: rgba(10, 18, 19, 0.78);
+  background: rgba(10, 18, 19, 0.95);
   border-bottom: 1px solid var(--border);
 }
 .nav {
