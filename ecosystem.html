@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Ecosystem — Munu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/styles.css" />
+<style>
+  /* HERO */
+  .eco-hero {
+    padding: 120px 0 72px;
+    text-align: center;
+  }
+  .eco-hero .eyebrow {
+    color: var(--struct);
+    font-family: "Geist Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    margin-bottom: 22px;
+    display: block;
+  }
+  .eco-hero h1 {
+    font-size: clamp(44px, 5.5vw, 64px);
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    margin: 0 0 22px;
+    line-height: 1.05;
+  }
+  .eco-hero h1 .accent { color: var(--accent); }
+  .eco-hero .lede {
+    color: var(--text-mute);
+    font-size: 17px;
+    line-height: 1.55;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  /* SECTIONS */
+  .eco-section {
+    padding: 88px 0;
+    border-top: 1px solid var(--border);
+  }
+  .eco-section .inner {
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+  .eco-section h2 {
+    font-size: clamp(24px, 2.6vw, 30px);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    margin: 0 0 36px;
+  }
+
+  /* ARCHITECTURE diagram (ASCII art card) */
+  .arch-frame {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 56px 32px;
+    display: flex;
+    justify-content: center;
+  }
+  .arch-frame pre {
+    margin: 0;
+    font-family: "Geist Mono", monospace;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--text);
+    white-space: pre;
+    overflow-x: auto;
+  }
+  .arch-frame .b { color: var(--accent); }
+  .arch-frame .d { color: var(--text-mute); }
+
+  /* REPOSITORIES grid */
+  .repo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 900px) { .repo-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .repo-grid { grid-template-columns: 1fr; } }
+  .repo {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 22px 22px 20px;
+    transition: all .2s;
+    cursor: pointer;
+    display: block;
+  }
+  .repo:hover {
+    border-color: var(--border-strong);
+    background: var(--bg-card-hov);
+  }
+  .repo .repo-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .repo .repo-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text);
+    font-family: "Geist Mono", monospace;
+    font-size: 14px;
+  }
+  .repo .repo-name svg { width: 14px; height: 14px; color: var(--text-mute); }
+  .repo .status {
+    font-family: "Geist Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    padding: 3px 9px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    color: #022019;
+    background: var(--accent);
+    font-weight: 600;
+  }
+  .repo .status.progress {
+    background: rgba(251, 191, 36, 0.18);
+    color: var(--warn);
+  }
+  .repo .status.planned {
+    background: var(--bg-elev);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+  .repo p {
+    color: var(--text-mute);
+    font-size: 13.5px;
+    line-height: 1.55;
+    margin: 0 0 18px;
+  }
+  .repo .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .repo .tag {
+    font-family: "Geist Mono", monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    color: var(--text-mute);
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+    border-radius: 3px;
+  }
+
+  /* CONTRIBUTING */
+  .contrib-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    align-items: start;
+  }
+  @media (max-width: 800px) { .contrib-grid { grid-template-columns: 1fr; gap: 32px; } }
+  .contrib-grid p {
+    color: var(--text-mute);
+    font-size: 15.5px;
+    line-height: 1.65;
+    margin: 0 0 16px;
+    max-width: 480px;
+  }
+  .contrib-grid p code {
+    font-family: "Geist Mono", monospace;
+    color: var(--accent);
+    background: rgba(45,212,191,0.06);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+  .quicklinks {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px 26px;
+  }
+  .quicklinks .ql-label {
+    font-family: "Geist Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .quicklinks ul { list-style: none; padding: 0; margin: 0; }
+  .quicklinks li { margin-bottom: 10px; }
+  .quicklinks a {
+    color: var(--text);
+    font-size: 14.5px;
+    transition: color .15s;
+  }
+  .quicklinks a:hover { color: var(--accent); }
+  .quicklinks a::before {
+    content: "→ ";
+    color: var(--accent);
+    margin-right: 2px;
+  }
+
+  /* ROADMAP */
+  .roadmap-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .road-item {
+    display: grid;
+    grid-template-columns: 14px 56px 1fr auto;
+    gap: 18px;
+    align-items: center;
+    padding: 14px 0;
+  }
+  .road-item .dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--text-dim);
+  }
+  .road-item.shipped .dot { background: var(--accent); }
+  .road-item.current .dot {
+    background: var(--accent);
+    box-shadow: 0 0 0 3px rgba(45,212,191,0.15);
+  }
+  .road-item .ver {
+    font-family: "Geist Mono", monospace;
+    font-size: 13px;
+    color: var(--accent);
+  }
+  .road-item .label {
+    color: var(--text);
+    font-size: 15px;
+  }
+  .road-item.current .label { font-weight: 500; }
+  .road-item .badge {
+    font-family: "Geist Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 3px;
+    background: rgba(45,212,191,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(45,212,191,0.3);
+  }
+  @media (max-width: 600px) {
+    .road-item { grid-template-columns: 14px 1fr; }
+    .road-item .ver, .road-item .badge { grid-column: 2; }
+  }
+</style>
+</head>
+<body>
+<div id="header-slot"></div>
+
+<main class="shell">
+
+  <!-- HERO -->
+  <section class="eco-hero">
+    <div class="container">
+      <span class="eyebrow">Projects</span>
+      <h1>The Munu <span class="accent">Ecosystem.</span></h1>
+      <p class="lede">Munu is not a single repository — it is a constellation of focused projects, each with a clear responsibility. The compiler, kernel, networking layer, and tooling are developed independently and composed at build time.</p>
+    </div>
+  </section>
+
+  <!-- ARCHITECTURE -->
+  <section class="eco-section">
+    <div class="container">
+      <div class="inner">
+        <h2>Architecture</h2>
+
+        <div class="arch-frame">
+<pre>             <span class="d">┌─────────────────┐</span>
+             <span class="d">│</span>  <span class="b">Source (.uv)</span>   <span class="d">│</span>
+             <span class="d">└────────┬────────┘</span>
+                      <span class="d">│</span>
+             <span class="d">┌────────▼────────┐</span>
+             <span class="d">│</span>      <span class="b">munu</span>       <span class="d">│</span>
+             <span class="d">│ (compiler pipeline) │</span>
+             <span class="d">│ parse → check → emit │</span>
+             <span class="d">└──┬──────┬──────┬──┘</span>
+                <span class="d">│</span>      <span class="d">│</span>      <span class="d">│</span>
+          <span class="d">┌─────▼─┐ ┌─▼───┐ ┌─▼───┐</span>
+          <span class="d">│</span> <span class="b">native</span> <span class="d">│ │</span> <span class="b">wasm</span> <span class="d">│ │</span> <span class="b">mcu</span>  <span class="d">│</span>
+          <span class="d">│ (Rust) │ │(WASI)│ │(Cortex)│</span>
+          <span class="d">└─────┬─┘ └─┬───┘ └─┬───┘</span>
+                <span class="d">│</span>     <span class="d">│</span>     <span class="d">│</span>
+             <span class="d">┌──▼─────▼─────▼──┐</span>
+             <span class="d">│</span>     <span class="b">kernel</span>      <span class="d">│</span>
+             <span class="d">│ (dataflow VM, steps bytecode) │</span>
+             <span class="d">└────────┬────────┘</span>
+                      <span class="d">│</span>
+          <span class="d">┌───────────┴───────────┐</span>
+       <span class="d">┌──▼──────┐         ┌─────▼──────┐</span>
+       <span class="d">│</span> <span class="b">datalog</span> <span class="d">│         │</span> <span class="b">blackframe</span> <span class="d">│</span>
+       <span class="d">│ (fact store) │     │ (networking) │</span>
+       <span class="d">└─────────┘         └────────────┘</span></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REPOSITORIES -->
+  <section class="eco-section">
+    <div class="container">
+      <div class="inner">
+        <h2>Repositories</h2>
+
+        <div class="repo-grid">
+          <a class="repo" href="#">
+            <div class="repo-head">
+              <span class="repo-name">
+                <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.49c-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.5 7.5 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+                munu
+              </span>
+              <span class="status">Active</span>
+            </div>
+            <p>The Munu compiler, type checker, and CLI. Parses <code style="color:var(--accent);font-family:'Geist Mono';">.uv</code> source, verifies contracts, and emits bytecode for all three targets.</p>
+            <div class="tags"><span class="tag">compiler</span><span class="tag">type-system</span><span class="tag">cli</span></div>
+          </a>
+
+          <a class="repo" href="#">
+            <div class="repo-head">
+              <span class="repo-name">
+                <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.49c-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.5 7.5 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+                kernel
+              </span>
+              <span class="status">Active</span>
+            </div>
+            <p>The Munu runtime kernel — a pure Rust VM that steps contracts by binding dataflow variables. No scheduler, no GC, no OS dependency.</p>
+            <div class="tags"><span class="tag">runtime</span><span class="tag">vm</span><span class="tag">no_std</span></div>
+          </a>
+
+          <a class="repo" href="#">
+            <div class="repo-head">
+              <span class="repo-name">
+                <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.49c-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.5 7.5 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+                blackframe
+              </span>
+              <span class="status">Active</span>
+            </div>
+            <p>Fixed 1024-byte encrypted frame protocol for distributed contract communication. ChaCha20-Poly1305 encryption, hyperbolic routing on the Poincaré disk.</p>
+            <div class="tags"><span class="tag">networking</span><span class="tag">crypto</span><span class="tag">distributed</span></div>
+          </a>
+
+          <a class="repo" href="#">
+            <div class="repo-head">
+              <span class="repo-name">
+                <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.49c-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.5 7.5 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+                datalog
+              </span>
+              <span class="status">Active</span>
+            </div>
+            <p>Embedded Datalog engine with EAVT indexing, BLAKE2b content addressing, and ψ-term values. Powers contract-local fact stores and rule evaluation.</p>
+            <div class="tags"><span class="tag">database</span><span class="tag">logic</span><span class="tag">lattice</span></div>
+          </a>
+
+          <a class="repo" href="#">
+            <div class="repo-head">
+              <span class="repo-name">
+                <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.49c-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.5 7.5 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+                wasi-host
+              </span>
+              <span class="status progress">In Progress</span>
+            </div>
+            <p>WASI host implementation for running Munu contracts in WebAssembly environments — browsers, CDN workers, and standalone runtimes.</p>
+            <div class="tags"><span class="tag">wasm</span><span class="tag">wasi</span><span class="tag">host</span></div>
+          </a>
+
+          <a class="repo" href="#">
+            <div class="repo-head">
+              <span class="repo-name">
+                <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.49c-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.5 7.5 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+                munu-lsp
+              </span>
+              <span class="status progress">In Progress</span>
+            </div>
+            <p>Language Server Protocol implementation for Munu. Provides diagnostics, completions, go-to-definition, and contract obligation hints in your editor.</p>
+            <div class="tags"><span class="tag">tooling</span><span class="tag">lsp</span><span class="tag">editor</span></div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTRIBUTING -->
+  <section class="eco-section">
+    <div class="container">
+      <div class="inner">
+        <h2>Contributing</h2>
+
+        <div class="contrib-grid">
+          <div>
+            <p>Munu is MIT-licensed and welcomes contributions. Each repository has its own <code>CONTRIBUTING.md</code> with build instructions, test commands, and style guidelines.</p>
+            <p>The best way to start is to pick a <code>good-first-issue</code> label in any repository, or join the Zulip chat and ask what needs attention.</p>
+          </div>
+
+          <div class="quicklinks">
+            <div class="ql-label">Quick Links</div>
+            <ul>
+              <li><a href="#">Good first issues</a></li>
+              <li><a href="#">Contributing guide</a></li>
+              <li><a href="#">Zulip chat (#munu)</a></li>
+              <li><a href="#roadmap">Roadmap</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROADMAP -->
+  <section class="eco-section" id="roadmap">
+    <div class="container">
+      <div class="inner">
+        <h2>Roadmap</h2>
+
+        <ul class="roadmap-list">
+          <li class="road-item shipped">
+            <span class="dot"></span>
+            <span class="ver">v0.1</span>
+            <span class="label">Core compiler + native target</span>
+            <span></span>
+          </li>
+          <li class="road-item shipped">
+            <span class="dot"></span>
+            <span class="ver">v0.2</span>
+            <span class="label">WASM target + WASI host</span>
+            <span></span>
+          </li>
+          <li class="road-item current">
+            <span class="dot"></span>
+            <span class="ver">v0.3</span>
+            <span class="label">Datalog integration + fact stores</span>
+            <span class="badge">Current</span>
+          </li>
+          <li class="road-item">
+            <span class="dot"></span>
+            <span class="ver">v0.4</span>
+            <span class="label">BlackFrame networking + distribution</span>
+            <span></span>
+          </li>
+          <li class="road-item">
+            <span class="dot"></span>
+            <span class="ver">v0.5</span>
+            <span class="label">MCU target + no_std kernel</span>
+            <span></span>
+          </li>
+          <li class="road-item">
+            <span class="dot"></span>
+            <span class="ver">v1.0</span>
+            <span class="label">Stable language spec + LSP</span>
+            <span></span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div id="footer-slot"></div>
+
+<script src="assets/page.js"></script>
+<script src="assets/network-bg.js"></script>
+<script> setupPage({ active: "ecosystem" }); </script>
+</body>
+</html>

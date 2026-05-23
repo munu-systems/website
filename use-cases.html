@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Use Cases — Munu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/styles.css" />
+<style>
+  /* Hero — left-aligned within centered column */
+  .uc-hero {
+    padding: 112px 0 88px;
+    position: relative;
+  }
+  .uc-hero .eyebrow {
+    margin-bottom: 22px;
+    color: var(--struct);
+  }
+  .uc-hero .eyebrow::before { display: none; }
+  .uc-hero h1 {
+    font-size: clamp(48px, 6vw, 76px);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1.02;
+    margin: 0 0 36px;
+    max-width: 980px;
+  }
+  .uc-hero h1 .accent { color: var(--accent); }
+  .uc-hero .lede {
+    color: var(--text-mute);
+    font-size: clamp(18px, 1.6vw, 21px);
+    line-height: 1.5;
+    max-width: 760px;
+    margin: 0;
+  }
+
+  /* Each use-case block */
+  .uc-section {
+    padding: 88px 0;
+    border-top: 1px solid var(--border);
+  }
+  .uc-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 22px;
+    margin-bottom: 26px;
+  }
+  .uc-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    background: rgba(45, 212, 191, 0.06);
+    border: 1px solid rgba(45, 212, 191, 0.22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .uc-icon svg { width: 24px; height: 24px; }
+  .uc-title h2 {
+    font-size: clamp(28px, 3.2vw, 38px);
+    letter-spacing: -0.02em;
+    font-weight: 500;
+    margin: 0 0 6px;
+    line-height: 1.1;
+  }
+  .uc-title .sub {
+    color: var(--text-mute);
+    font-size: 16px;
+    margin: 0;
+  }
+  .uc-desc {
+    color: var(--text-mute);
+    font-size: 17px;
+    line-height: 1.6;
+    max-width: 920px;
+    margin: 0 0 56px;
+  }
+  .uc-desc strong { color: var(--text); font-weight: 500; }
+  .uc-desc code {
+    color: var(--accent);
+    background: rgba(45,212,191,0.06);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+
+  /* Two-column: why munu | code */
+  .uc-body {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 64px;
+    align-items: start;
+  }
+  @media (max-width: 900px) { .uc-body { grid-template-columns: 1fr; gap: 32px; } }
+
+  .why-block .why-label {
+    font-family: "Geist Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 22px;
+  }
+  .why-block ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .why-block li {
+    display: grid;
+    grid-template-columns: 12px 1fr;
+    gap: 14px;
+    color: var(--text);
+    font-size: 15.5px;
+    line-height: 1.5;
+    align-items: baseline;
+  }
+  .why-block li::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-top: 8px;
+    grid-column: 1;
+  }
+  .why-block li code {
+    font-family: "Geist Mono", monospace;
+    color: var(--accent);
+    font-size: 0.92em;
+  }
+
+  /* Code window override for these blocks */
+  .uc-body .code-window pre { padding: 24px 26px; line-height: 1.75; font-size: 13px; }
+
+  /* Final CTA */
+  .uc-cta {
+    padding: 120px 0;
+    text-align: center;
+    border-top: 1px solid var(--border);
+  }
+  .uc-cta h2 {
+    font-size: clamp(34px, 4vw, 48px);
+    letter-spacing: -0.025em;
+    font-weight: 500;
+    margin: 0 0 18px;
+  }
+  .uc-cta p {
+    color: var(--text-mute);
+    font-size: 18px;
+    margin: 0 0 36px;
+  }
+</style>
+</head>
+<body>
+<div id="header-slot"></div>
+
+<main class="shell">
+
+  <!-- HERO -->
+  <section class="uc-hero">
+    <div class="container">
+      <div class="eyebrow">APPLICATIONS</div>
+      <h1>Where formal meets <span class="accent">practical.</span></h1>
+      <p class="lede">Munu is designed for systems where correctness is not optional — AI agents that must obey constraints, firmware that must not crash, networks that must converge, and edge functions that must respond in time.</p>
+    </div>
+  </section>
+
+  <!-- 1 · AI AGENT SUPERVISION -->
+  <section class="uc-section">
+    <div class="container">
+      <div class="uc-head">
+        <div class="uc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="m12 3 1.5 3 3 1.5-3 1.5L12 12l-1.5-3-3-1.5 3-1.5L12 3Z"/>
+            <path d="M18 14l.9 1.8 1.8.9-1.8.9L18 19.4l-.9-1.8-1.8-.9 1.8-.9.9-1.8Z"/>
+            <path d="M6 14l.7 1.4 1.4.7-1.4.7L6 18.2l-.7-1.4-1.4-.7 1.4-.7L6 14Z"/>
+          </svg>
+        </div>
+        <div class="uc-title">
+          <h2>AI Agent Supervision</h2>
+          <p class="sub">Contracts as guardrails for LLMs at tool-use time</p>
+        </div>
+      </div>
+
+      <p class="uc-desc">When an LLM calls a tool, that call is a contract — every LLM in your stack reads the same constraint. The <code>must:</code> formula defines what the agent is allowed to do. The <code>do:</code> formula defines how it recovers from failure. Breach is not an exception — it's a permanent signal to the supervisor that the agent violated its obligation.</p>
+
+      <div class="uc-body">
+        <div class="why-block">
+          <div class="why-label">Why Munu</div>
+          <ul>
+            <li>Formal bounds on agent behaviour — not just prompt engineering</li>
+            <li>Supervision trees that escalate, restart, or terminate agents</li>
+            <li>Structured diagnostics that LLMs can parse and self-correct from</li>
+            <li>Compose agent capabilities via lattice subsumption (<code>⊑</code>)</li>
+          </ul>
+        </div>
+
+        <div class="code-window">
+          <div class="code-window-head">
+            <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <span>agent.uv</span>
+            <span></span>
+          </div>
+<pre><span class="kw">contract</span> <span class="fn">Agent</span><span class="pn">(</span>tools<span class="pn">:</span> ToolSet<span class="pn">)</span> <span class="pn">{</span>
+  <span class="kw">must:</span> only_calls<span class="pn">(</span>tools.allowed<span class="pn">)</span>
+    <span class="kw">and</span> responds_within<span class="pn">(</span><span class="num">5s</span><span class="pn">)</span>
+    <span class="kw">and</span> output_satisfies<span class="pn">(</span>safety_filter<span class="pn">)</span>
+
+  <span class="kw">do:</span> two_strikes<span class="pn">()</span>   <span class="com">// restart once, then escalate</span>
+
+  <span class="kw">nu</span> <span class="fn">serve</span><span class="pn">(</span>requests<span class="pn">:</span> <span class="kw">Stream</span><span class="pn">&lt;</span><span class="kw">Query</span><span class="pn">&gt;)</span> <span class="pn">{</span>
+    <span class="kw">let</span> result <span class="pn">=</span> tools.call<span class="pn">(</span>requests.head<span class="pn">)</span>
+    emit<span class="pn">(</span>result<span class="pn">)</span>
+    serve<span class="pn">(</span>requests.tail<span class="pn">)</span>
+  <span class="pn">}</span>
+<span class="pn">}</span></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · EMBEDDED SYSTEMS -->
+  <section class="uc-section">
+    <div class="container">
+      <div class="uc-head">
+        <div class="uc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <rect x="6" y="6" width="12" height="12" rx="1.5"/>
+            <rect x="9" y="9" width="6" height="6" rx="0.5"/>
+            <path d="M9 3v3M12 3v3M15 3v3M9 18v3M12 18v3M15 18v3M3 9h3M3 12h3M3 15h3M18 9h3M18 12h3M18 15h3"/>
+          </svg>
+        </div>
+        <div class="uc-title">
+          <h2>Embedded Systems</h2>
+          <p class="sub">Verified firmware on Cortex-M0 and RISC-V</p>
+        </div>
+      </div>
+
+      <p class="uc-desc">Munu's kernel runs without an OS, without a heap, without a garbage collector. Contracts compile to bare-metal bytecode with static memory allocation. The <code>requires</code>/<code>ensures</code>/<code>decreases</code> clauses prove termination and correctness at compile time — critical for safety-rated firmware.</p>
+
+      <div class="uc-body">
+        <div class="why-block">
+          <div class="why-label">Why Munu</div>
+          <ul>
+            <li>No runtime overhead — arena allocation, no GC pauses</li>
+            <li>Compile-time verification of timing and memory bounds</li>
+            <li>Same language for application logic and hardware drivers</li>
+            <li>Supervision trees replace ad-hoc watchdog timers</li>
+          </ul>
+        </div>
+
+        <div class="code-window">
+          <div class="code-window-head">
+            <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <span>sensor.uv · target=cortex-m0</span>
+            <span></span>
+          </div>
+<pre><span class="kw">contract</span> <span class="fn">SensorDriver</span><span class="pn">(</span>bus<span class="pn">:</span> I2C<span class="pn">)</span> <span class="pn">{</span>
+  <span class="kw">must:</span> responds_within<span class="pn">(</span><span class="num">10ms</span><span class="pn">)</span>
+    <span class="kw">and</span> never_blocks<span class="pn">(</span>bus<span class="pn">)</span>
+
+  <span class="kw">do:</span> permanent<span class="pn">()</span>   <span class="com">// always restart on failure</span>
+
+  <span class="kw">mu</span> <span class="fn">read_temperature</span><span class="pn">()</span> <span class="pn">-&gt;</span> <span class="kw">i16</span>
+    <span class="kw">requires</span> bus.is_ready<span class="pn">()</span>
+    <span class="kw">ensures</span>  <span class="pn">(</span>t<span class="pn">)</span> t <span class="pn">&gt;=</span> <span class="num">-40</span> <span class="pn">&amp;&amp;</span> t <span class="pn">&lt;=</span> <span class="num">125</span>
+  <span class="pn">{</span>
+    <span class="kw">let</span> raw <span class="pn">=</span> bus.read_register<span class="pn">(</span><span class="num">0x00</span><span class="pn">,</span> <span class="num">2</span><span class="pn">)</span>
+    <span class="pn">(</span>raw<span class="pn">[</span><span class="num">0</span><span class="pn">]</span> <span class="pn">&lt;&lt;</span> <span class="num">8</span> <span class="pn">|</span> raw<span class="pn">[</span><span class="num">1</span><span class="pn">])</span> <span class="pn">/</span> <span class="num">256</span>
+  <span class="pn">}</span>
+<span class="pn">}</span></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · DISTRIBUTED CONSENSUS -->
+  <section class="uc-section">
+    <div class="container">
+      <div class="uc-head">
+        <div class="uc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M3 12h18"/>
+            <path d="M12 3a13 13 0 0 1 0 18"/>
+            <path d="M12 3a13 13 0 0 0 0 18"/>
+          </svg>
+        </div>
+        <div class="uc-title">
+          <h2>Distributed Consensus</h2>
+          <p class="sub">BlackFrame protocol for trustless coordination</p>
+        </div>
+      </div>
+
+      <p class="uc-desc">Contracts that span multiple nodes communicate via BlackFrame — a fixed-size encrypted frame protocol. Routing is greedy on the Poincaré disk. State convergence uses CRDTs backed by Datalog, ensuring monotone progress without coordination overhead.</p>
+
+      <div class="uc-body">
+        <div class="why-block">
+          <div class="why-label">Why Munu</div>
+          <ul>
+            <li>Fixed 1024-byte frames eliminate framing attacks</li>
+            <li>Hyperbolic routing with O(log n) stretch</li>
+            <li>CRDT + Datalog for coordination-free convergence</li>
+            <li>Contract obligations enforced across network boundaries</li>
+          </ul>
+        </div>
+
+        <div class="code-window">
+          <div class="code-window-head">
+            <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <span>replica.uv</span>
+            <span></span>
+          </div>
+<pre><span class="kw">contract</span> <span class="fn">ReplicaNode</span><span class="pn">(</span>peers<span class="pn">:</span> <span class="kw">Set</span><span class="pn">&lt;</span>NodeId<span class="pn">&gt;)</span> <span class="pn">{</span>
+  <span class="kw">must:</span> converges_within<span class="pn">(</span>peers<span class="pn">,</span> <span class="num">30s</span><span class="pn">)</span>
+    <span class="kw">and</span> frame_size_eq<span class="pn">(</span><span class="num">1024</span><span class="pn">)</span>
+
+  <span class="kw">do:</span> permanent<span class="pn">()</span>
+
+  <span class="kw">nu</span> <span class="fn">replicate</span><span class="pn">(</span>events<span class="pn">:</span> <span class="kw">Stream</span><span class="pn">&lt;</span>Event<span class="pn">&gt;)</span> <span class="pn">{</span>
+    <span class="kw">let</span> frame <span class="pn">=</span> BlackFrame<span class="pn">::</span>seal<span class="pn">(</span>events.head<span class="pn">)</span>
+    <span class="kw">for</span> peer <span class="kw">in</span> peers <span class="pn">{</span>
+      route<span class="pn">(</span>frame<span class="pn">,</span> peer.coordinates<span class="pn">)</span>
+    <span class="pn">}</span>
+    replicate<span class="pn">(</span>events.tail<span class="pn">)</span>
+  <span class="pn">}</span>
+<span class="pn">}</span></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · EDGE COMPUTING -->
+  <section class="uc-section">
+    <div class="container">
+      <div class="uc-head">
+        <div class="uc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <rect x="3" y="4" width="18" height="6" rx="1"/>
+            <rect x="3" y="14" width="18" height="6" rx="1"/>
+            <circle cx="7" cy="7" r=".7" fill="currentColor"/>
+            <circle cx="7" cy="17" r=".7" fill="currentColor"/>
+            <path d="M11 7h6M11 17h6"/>
+          </svg>
+        </div>
+        <div class="uc-title">
+          <h2>Edge Computing</h2>
+          <p class="sub">WASM contracts in browsers and CDN workers</p>
+        </div>
+      </div>
+
+      <p class="uc-desc">Munu contracts compile to WebAssembly with zero runtime dependencies. Deploy the same verified logic to Cloudflare Workers, Deno Deploy, or a browser tab. The WASI host provides I/O — the contract never touches the network directly.</p>
+
+      <div class="uc-body">
+        <div class="why-block">
+          <div class="why-label">Why Munu</div>
+          <ul>
+            <li>Sub-millisecond cold starts — no interpreter warmup</li>
+            <li>Same contract runs in browser, CDN edge, and server</li>
+            <li>Sandboxed by WASM — no memory safety concerns</li>
+            <li>Module-per-contract with aggressive dead-code elimination</li>
+          </ul>
+        </div>
+
+        <div class="code-window">
+          <div class="code-window-head">
+            <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <span>edge.uv · target=wasm</span>
+            <span></span>
+          </div>
+<pre><span class="kw">contract</span> <span class="fn">EdgeValidator</span><span class="pn">(</span>config<span class="pn">:</span> Config<span class="pn">)</span> <span class="pn">{</span>
+  <span class="kw">must:</span> latency_p99_under<span class="pn">(</span><span class="num">5ms</span><span class="pn">)</span>
+    <span class="kw">and</span> memory_under<span class="pn">(</span><span class="num">128kb</span><span class="pn">)</span>
+
+  <span class="kw">do:</span> permanent<span class="pn">()</span>
+
+  <span class="kw">mu</span> <span class="fn">validate_request</span><span class="pn">(</span>req<span class="pn">:</span> HttpRequest<span class="pn">)</span> <span class="pn">-&gt;</span> Response
+    <span class="kw">requires</span> req.body.len <span class="pn">&lt;=</span> config.max_body
+    <span class="kw">ensures</span>  <span class="pn">(</span>r<span class="pn">)</span> r.status <span class="pn">&lt;</span> <span class="num">500</span>
+  <span class="pn">{</span>
+    <span class="kw">let</span> parsed <span class="pn">=</span> parse_json<span class="pn">(</span>req.body<span class="pn">)</span><span class="pn">?</span>
+    <span class="kw">let</span> checked <span class="pn">=</span> schema_check<span class="pn">(</span>parsed<span class="pn">,</span> config.schema<span class="pn">)</span>
+    Response<span class="pn">::</span>ok<span class="pn">(</span>checked<span class="pn">)</span>
+  <span class="pn">}</span>
+<span class="pn">}</span></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · FORMAL VERIFICATION -->
+  <section class="uc-section">
+    <div class="container">
+      <div class="uc-head">
+        <div class="uc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </div>
+        <div class="uc-title">
+          <h2>Formal Verification</h2>
+          <p class="sub">Prove properties at compile time, not test time</p>
+        </div>
+      </div>
+
+      <p class="uc-desc">Every <code>mu</code> function carries <code>requires</code>/<code>ensures</code>/<code>decreases</code> annotations. The compiler verifies termination, pre-conditions, and post-conditions statically. No separate proof assistant needed — verification is part of the language, not bolted on.</p>
+
+      <div class="uc-body">
+        <div class="why-block">
+          <div class="why-label">Why Munu</div>
+          <ul>
+            <li>Termination proofs via <code>decreases</code> measures</li>
+            <li>Pre/post conditions checked at compile time</li>
+            <li>Lattice-based type inference catches contradictions early</li>
+            <li>No separate proof language — verification in the source</li>
+          </ul>
+        </div>
+
+        <div class="code-window">
+          <div class="code-window-head">
+            <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <span>search.uv</span>
+            <span></span>
+          </div>
+<pre><span class="kw">mu</span> <span class="fn">binary_search</span><span class="pn">(</span>arr<span class="pn">:</span> <span class="pn">&amp;[</span><span class="kw">i64</span><span class="pn">]</span><span class="pn">,</span> target<span class="pn">:</span> <span class="kw">i64</span><span class="pn">)</span> <span class="pn">-&gt;</span> <span class="kw">Option</span><span class="pn">&lt;</span><span class="kw">usize</span><span class="pn">&gt;</span>
+  <span class="kw">requires</span> arr.is_sorted<span class="pn">()</span>
+  <span class="kw">ensures</span>  <span class="pn">(</span>r<span class="pn">)</span> <span class="kw">match</span> r <span class="pn">{</span>
+    Some<span class="pn">(</span>i<span class="pn">)</span> <span class="pn">=&gt;</span> arr<span class="pn">[</span>i<span class="pn">]</span> <span class="pn">==</span> target<span class="pn">,</span>
+    None    <span class="pn">=&gt;</span> <span class="pn">!</span>arr.contains<span class="pn">(</span>target<span class="pn">)</span>
+  <span class="pn">}</span>
+  <span class="kw">decreases</span> arr.len
+<span class="pn">{</span>
+  <span class="kw">if</span> arr.is_empty<span class="pn">()</span> <span class="pn">{</span> <span class="kw">return</span> None <span class="pn">}</span>
+  <span class="kw">let</span> mid <span class="pn">=</span> arr.len <span class="pn">/</span> <span class="num">2</span>
+  <span class="kw">match</span> arr<span class="pn">[</span>mid<span class="pn">].</span>cmp<span class="pn">(</span>target<span class="pn">)</span> <span class="pn">{</span>
+    Equal   <span class="pn">=&gt;</span> Some<span class="pn">(</span>mid<span class="pn">),</span>
+    Less    <span class="pn">=&gt;</span> binary_search<span class="pn">(&amp;</span>arr<span class="pn">[</span>mid<span class="pn">+</span><span class="num">1</span><span class="pn">..],</span> target<span class="pn">),</span>
+    Greater <span class="pn">=&gt;</span> binary_search<span class="pn">(&amp;</span>arr<span class="pn">[..</span>mid<span class="pn">],</span> target<span class="pn">),</span>
+  <span class="pn">}</span>
+<span class="pn">}</span></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- READY TO BUILD CTA -->
+  <section class="uc-cta">
+    <div class="container">
+      <h2>Ready to build?</h2>
+      <p>Start with the compiler, write your first contract, and deploy to any target.</p>
+      <a class="btn btn-primary" href="get-started.html">
+        Get Started
+        <svg class="arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<div id="footer-slot"></div>
+
+<script src="assets/page.js"></script>
+<script src="assets/network-bg.js"></script>
+<script> setupPage({ active: "use-cases" }); </script>
+</body>
+</html>

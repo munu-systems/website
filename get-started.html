@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Get Started — Munu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/styles.css" />
+<style>
+  /* HERO */
+  .gs-hero {
+    padding: 120px 0 72px;
+    text-align: center;
+  }
+  .gs-hero .eyebrow {
+    color: var(--struct);
+    font-family: "Geist Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    margin-bottom: 22px;
+    display: block;
+  }
+  .gs-hero h1 {
+    font-size: clamp(44px, 5.5vw, 64px);
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    margin: 0 0 22px;
+    line-height: 1.05;
+  }
+  .gs-hero h1 .accent { color: var(--accent); }
+  .gs-hero .lede {
+    color: var(--text-mute);
+    font-size: 17px;
+    line-height: 1.55;
+    max-width: 620px;
+    margin: 0 auto;
+  }
+
+  /* SECTION SHELL */
+  .gs-section {
+    padding: 80px 0;
+    border-top: 1px solid var(--border);
+  }
+  .gs-section-inner {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .gs-section h2 {
+    font-size: clamp(26px, 3vw, 32px);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    margin: 0 0 28px;
+  }
+  .gs-section .section-sub {
+    color: var(--text-mute);
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 720px;
+    margin: -16px 0 28px;
+  }
+
+  /* OPTION / STEP CARD */
+  .opt {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 22px 24px;
+    margin-bottom: 18px;
+  }
+  .opt:last-child { margin-bottom: 0; }
+  .opt .opt-head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .opt .opt-num {
+    font-family: "Geist Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    color: var(--accent);
+    background: rgba(45,212,191,0.08);
+    border: 1px solid rgba(45,212,191,0.2);
+    padding: 3px 10px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .opt .opt-label {
+    color: var(--text);
+    font-size: 14.5px;
+    font-weight: 500;
+  }
+  .opt .opt-label .em {
+    color: var(--text-mute);
+    font-weight: 400;
+    margin-right: 4px;
+  }
+  .opt .opt-meta {
+    margin-left: auto;
+    font-family: "Geist Mono", monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+  }
+
+  /* code blocks inside opts */
+  .opt pre {
+    margin: 0;
+    background: #050809;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 16px 18px;
+    font-family: "Geist Mono", monospace;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--ident);
+    overflow-x: auto;
+    white-space: pre;
+    position: relative;
+  }
+  .opt .cmd-line { display: block; }
+  .opt .com { color: var(--com); font-style: italic; }
+  .opt .kw  { color: var(--kw); }
+  .opt .str { color: var(--str); }
+  .opt .num { color: var(--num); }
+  .opt .pn  { color: var(--punct); }
+  .opt .fn  { color: var(--text); }
+
+  .verify-line {
+    font-family: "Geist Mono", monospace;
+    font-size: 13px;
+    color: var(--text-mute);
+    margin-top: 18px;
+  }
+  .verify-line code {
+    color: var(--accent);
+    margin-left: 8px;
+  }
+
+  /* DEPLOYMENT TARGETS */
+  .targets-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 32px;
+  }
+  @media (max-width: 800px) { .targets-grid { grid-template-columns: 1fr; } }
+  .target {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    transition: all .2s;
+  }
+  .target:hover {
+    border-color: var(--border-strong);
+    background: var(--bg-card-hov);
+  }
+  .target.active {
+    border-color: rgba(45,212,191,0.4);
+    background: rgba(45,212,191,0.04);
+  }
+  .target .target-tag {
+    font-family: "Geist Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  .target h4 {
+    font-size: 18px;
+    margin: 0 0 10px;
+    letter-spacing: -0.01em;
+    font-weight: 500;
+  }
+  .target p {
+    color: var(--text-mute);
+    font-size: 13.5px;
+    line-height: 1.55;
+    margin: 0 0 18px;
+    flex: 1;
+  }
+  .target pre {
+    margin: 0;
+    background: #050809;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 14px;
+    font-family: "Geist Mono", monospace;
+    font-size: 12.5px;
+    color: var(--text);
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  /* NEXT STEPS */
+  .next-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 32px;
+  }
+  @media (max-width: 700px) { .next-grid { grid-template-columns: 1fr; } }
+  .next-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 26px;
+    transition: all .2s;
+    cursor: pointer;
+    display: block;
+  }
+  .next-card:hover {
+    border-color: var(--accent);
+    background: var(--bg-card-hov);
+  }
+  .next-card h4 {
+    font-size: 17px;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+    font-weight: 500;
+  }
+  .next-card p {
+    color: var(--text-mute);
+    font-size: 14px;
+    line-height: 1.55;
+    margin: 0;
+  }
+  .next-card code {
+    font-family: "Geist Mono", monospace;
+    color: var(--accent);
+    font-size: 0.92em;
+  }
+</style>
+</head>
+<body>
+<div id="header-slot"></div>
+
+<main class="shell">
+
+  <!-- HERO -->
+  <section class="gs-hero">
+    <div class="container">
+      <span class="eyebrow">Quick Start</span>
+      <h1>Get started with <span class="accent">Munu.</span></h1>
+      <p class="lede">Install the compiler, create your first project, and run a contract — in under five minutes.</p>
+    </div>
+  </section>
+
+  <!-- INSTALLATION -->
+  <section class="gs-section">
+    <div class="container">
+      <div class="gs-section-inner">
+        <h2>Installation</h2>
+
+        <div class="opt">
+          <div class="opt-head">
+            <span class="opt-num">Option 1</span>
+            <span class="opt-label"><span class="em">—</span> Install script <span style="color:var(--text-dim);">(recommended)</span></span>
+          </div>
+<pre><span class="cmd-line">curl -sSL munu.dev/install | sh</span></pre>
+        </div>
+
+        <div class="opt">
+          <div class="opt-head">
+            <span class="opt-num">Option 2</span>
+            <span class="opt-label"><span class="em">—</span> Build from source</span>
+          </div>
+<pre><span class="com"># requires Rust 1.75+</span>
+git clone https://github.com/munu-systems/munu.git
+cd munu
+cargo build --release
+cargo install --path crates/munu-cli</pre>
+        </div>
+
+        <div class="opt">
+          <div class="opt-head">
+            <span class="opt-num">Option 3</span>
+            <span class="opt-label"><span class="em">—</span> Cargo install</span>
+          </div>
+<pre><span class="cmd-line">cargo install munu-cli</span></pre>
+        </div>
+
+        <div class="verify-line">Verify your installation: <code>munu --version</code></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- YOUR FIRST PROJECT -->
+  <section class="gs-section">
+    <div class="container">
+      <div class="gs-section-inner">
+        <h2>Your First Project</h2>
+
+        <div class="opt">
+          <div class="opt-head">
+            <span class="opt-num">01</span>
+            <span class="opt-label">Create a new project</span>
+          </div>
+<pre>munu new hello-world
+cd hello-world</pre>
+        </div>
+
+        <div class="opt">
+          <div class="opt-head">
+            <span class="opt-num">02</span>
+            <span class="opt-label">Project structure</span>
+          </div>
+<pre><span class="com"># generated project layout</span>
+hello-world/
+├── munu.toml         <span class="com"># project manifest</span>
+├── src/
+│   └── main.uv       <span class="com"># entry contract</span>
+└── tests/
+    └── main_test.uv  <span class="com"># contract tests</span></pre>
+        </div>
+
+        <div class="opt">
+          <div class="opt-head">
+            <span class="opt-num">03</span>
+            <span class="opt-label">Write a contract</span>
+          </div>
+<pre><span class="com">// src/main.uv</span>
+<span class="kw">contract</span> <span class="fn">Hello</span> <span class="pn">{</span>
+  <span class="kw">do:</span> permanent<span class="pn">()</span>
+
+  <span class="kw">mu</span> <span class="fn">greet</span><span class="pn">(</span>name<span class="pn">:</span> <span class="kw">String</span><span class="pn">)</span> <span class="pn">-&gt;</span> <span class="kw">String</span>
+    <span class="kw">requires</span> name.len <span class="pn">&gt;</span> <span class="num">0</span>
+    <span class="kw">ensures</span>  <span class="pn">(</span>r<span class="pn">)</span> r.contains<span class="pn">(</span>name<span class="pn">)</span>
+  <span class="pn">{</span>
+    <span class="str">"Hello, "</span> <span class="pn">++</span> name <span class="pn">++</span> <span class="str">"!"</span>
+  <span class="pn">}</span>
+<span class="pn">}</span></pre>
+        </div>
+
+        <div class="opt">
+          <div class="opt-head">
+            <span class="opt-num">04</span>
+            <span class="opt-label">Run it</span>
+          </div>
+<pre><span class="com"># run natively</span>
+munu run
+
+<span class="com"># run as WASM</span>
+munu run --target=wasm
+
+<span class="com"># check types and contracts</span>
+munu check
+
+<span class="com"># run tests</span>
+munu test</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEPLOYMENT TARGETS -->
+  <section class="gs-section">
+    <div class="container">
+      <div class="gs-section-inner">
+        <h2>Deployment Targets</h2>
+        <p class="section-sub">Munu compiles to three targets from day one. The same contract, the same verification — different backends.</p>
+
+        <div class="targets-grid">
+          <div class="target">
+            <div class="target-tag">native</div>
+            <h4>Native / Rust</h4>
+            <p>Compiles to a Rust crate. Embed in any Rust project or run standalone. Supports <code style="color:var(--accent);font-family:'Geist Mono'">no_std</code>.</p>
+<pre>munu build --target=native</pre>
+          </div>
+          <div class="target active">
+            <div class="target-tag">wasm</div>
+            <h4>WebAssembly</h4>
+            <p>WASI or browser host. Module-per-contract with dead-code elimination.</p>
+<pre>munu build --target=wasm</pre>
+          </div>
+          <div class="target">
+            <div class="target-tag">mcu</div>
+            <h4>Microcontroller</h4>
+            <p>ARM Cortex-M0, RISC-V 32-bit. No heap, no OS, cooperative scheduling.</p>
+<pre>munu build --target=mcu:cortex-m0</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEXT STEPS -->
+  <section class="gs-section">
+    <div class="container">
+      <div class="gs-section-inner">
+        <h2>Next Steps</h2>
+
+        <div class="next-grid">
+          <a class="next-card" href="ecosystem.html#compiler">
+            <h4>Browse the source</h4>
+            <p>Read the compiler, kernel, and standard library implementation.</p>
+          </a>
+          <a class="next-card" href="methodology.html">
+            <h4>Read the spec</h4>
+            <p><code>grammar.bnf</code>, <code>semantics.pdf</code>, <code>isa.md</code> — the formal reference.</p>
+          </a>
+          <a class="next-card" href="use-cases.html">
+            <h4>Examples</h4>
+            <p>Working contracts for common patterns: supervision, streaming, verification.</p>
+          </a>
+          <a class="next-card" href="blog.html">
+            <h4>Join Zulip</h4>
+            <p>#munu — async, no rush. Ask questions, share counter-examples.</p>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div id="footer-slot"></div>
+
+<script src="assets/page.js"></script>
+<script src="assets/network-bg.js"></script>
+<script> setupPage({ active: "get-started" }); </script>
+</body>
+</html>
