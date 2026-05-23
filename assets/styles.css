@@ -375,7 +375,16 @@ h1, h2, h3, h4 {
   font-size: 13.5px;
   line-height: 1.75;
   overflow-x: auto;
+  color: var(--ident);
 }
+.code-window pre .com { color: var(--com); font-style: italic; }
+.code-window pre .kw  { color: var(--kw); }
+.code-window pre .num { color: var(--num); }
+.code-window pre .str { color: var(--str); }
+.code-window pre .pn  { color: var(--punct); }
+.code-window pre .fn  { color: #e6efed; }
+.code-window pre .err { color: var(--danger); }
+.code-window pre .ok  { color: var(--accent); }
 
 .site-footer {
   border-top: 1px solid var(--border);
