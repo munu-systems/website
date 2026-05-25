@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ΔQ, modal mu-calculus, and the return to determinism — Munu Blog</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+<meta name="description" content="How ΔQ quality attenuation and modal mu-calculus behaviour clauses unify into a single failure model that returns distributed systems to deterministic execution." />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="ΔQ, modal mu-calculus, and the return to determinism — Munu Blog" />
+<meta property="og:description" content="How ΔQ quality attenuation and modal mu-calculus behaviour clauses unify into a single failure model that returns distributed systems to deterministic execution." />
+<meta property="og:url" content="https://munu.hk/blog-delta-q-failure.html" />
+<meta property="og:site_name" content="Munu" />
+<meta property="og:image" content="https://munu.hk/assets/og-image.svg" />
+<meta name="twitter:image" content="https://munu.hk/assets/og-image.svg" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="ΔQ, modal mu-calculus, and the return to determinism — Munu Blog" />
+<meta name="twitter:description" content="How ΔQ quality attenuation and modal mu-calculus behaviour clauses unify into a single failure model that returns distributed systems to deterministic execution." />
+<link rel="stylesheet" href="assets/fonts.css" />
+<link rel="stylesheet" href="assets/styles.css" />
+<style>
+  .post-hero { padding: 120px 0 56px; }
+  .post-hero .eyebrow { color: var(--struct); font-family: "Geist Mono", monospace; font-size: 12px; letter-spacing: 0.24em; text-transform: uppercase; margin-bottom: 22px; display: block; }
+  .post-hero h1 { font-size: clamp(36px, 5vw, 56px); font-weight: 500; letter-spacing: -0.025em; margin: 0 0 22px; line-height: 1.1; max-width: 800px; }
+  .post-hero h1 .accent { color: var(--accent); }
+  .post-hero .post-meta { color: var(--text-dim); font-family: "Geist Mono", monospace; font-size: 12px; letter-spacing: 0.1em; }
+  .post-body { padding: 56px 0 120px; border-top: 1px solid var(--border); }
+  .post-body .post-inner { max-width: 720px; margin: 0 auto; }
+  .post-body p { color: var(--text-mute); font-size: 17px; line-height: 1.75; margin: 0 0 24px; }
+  .post-body p strong { color: var(--text); font-weight: 500; }
+  .post-body p code { color: var(--accent); background: rgba(45,212,191,0.06); padding: 1px 6px; border-radius: 3px; font-size: 0.9em; }
+  .post-body h2 { font-size: clamp(24px, 3vw, 32px); font-weight: 500; letter-spacing: -0.02em; margin: 56px 0 20px; color: var(--text); }
+  .post-body h2 .accent { color: var(--accent); }
+  .post-body h3 { font-size: 20px; font-weight: 500; letter-spacing: -0.01em; margin: 40px 0 16px; color: var(--text); }
+  .post-body blockquote { border-left: 2px solid var(--accent); margin: 32px 0; padding: 0 0 0 24px; color: var(--text); font-size: 18px; line-height: 1.6; font-style: italic; }
+  .post-body .aside { background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 24px 28px; margin: 32px 0; }
+  .post-body .aside .aside-label { font-family: "Geist Mono", monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; }
+  .post-body .aside p { margin-bottom: 0; font-size: 15px; }
+  .post-body .aside p + p { margin-top: 14px; }
+  .post-body hr { border: none; height: 1px; background: var(--border); margin: 48px 0; }
+  .post-body .state-table { width: 100%; border-collapse: collapse; margin: 32px 0; font-size: 14px; }
+  .post-body .state-table th { text-align: left; font-family: "Geist Mono", monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-dim); padding: 10px 14px; border-bottom: 1px solid var(--border); }
+  .post-body .state-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text-mute); }
+  .post-body .state-table td:first-child { color: var(--text); font-weight: 500; }
+  .post-body .state-table td code { color: var(--accent); font-size: 0.9em; background: rgba(45,212,191,0.06); padding: 1px 5px; border-radius: 3px; }
+  .post-nav { padding: 48px 0; border-top: 1px solid var(--border); }
+  .post-nav a { color: var(--accent); font-size: 15px; display: inline-flex; align-items: center; gap: 8px; }
+  .post-nav a:hover { text-decoration: underline; }
+  .ref-list { list-style: none; padding: 0; margin: 32px 0 0; }
+  .ref-list li { color: var(--text-mute); font-size: 14px; line-height: 1.6; margin-bottom: 12px; padding-left: 28px; position: relative; }
+  .ref-list li .ref-num { position: absolute; left: 0; color: var(--accent); font-family: "Geist Mono", monospace; font-size: 12px; }
+</style>
+</head>
+<body>
+<div id="header-slot"></div>
+
+<main class="shell">
+
+  <section class="post-hero">
+    <div class="container-narrow">
+      <span class="eyebrow">Blog</span>
+      <h1><span class="accent">ΔQ</span>, modal mu-calculus, and the return to determinism</h1>
+      <div class="post-meta">25 MAY 2026 · STEWART MACKENZIE</div>
+    </div>
+  </section>
+
+  <section class="post-body">
+    <div class="container-narrow">
+      <div class="post-inner">
+
+<p>The previous two posts established the mu/nu duality and the case for modal mu-calculus as the language for behaviour clauses. This post ties them together with a third piece: <strong>ΔQ</strong>, the quality-centric systems paradigm developed by Neil Davies and Peter Thompson at Predictable Network Solutions. The combination of ΔQ and modal mu-calculus in Munu's <code>do</code> and <code>must</code> clauses is not an accident — it's the theoretically correct way to build distributed fault-tolerant systems that maintain deterministic execution.</p>
+
+<h2>The <span class="accent">mass</span> metaphor</h2>
+
+<p>ΔQ models every computation as <strong>mass</strong> that must be delivered. When you spawn a process to compute a result, that result has mass — it's something the system has committed to producing. The mass can be in one of three states:</p>
+
+<p><strong>Tangible</strong> — the computation is in flight or has been delivered. This is the happy path. The result either hasn't arrived yet (the variable is unbound) or it has arrived (the variable is bound). Mass is on its way to where it needs to be.</p>
+
+<p><strong>Attenuated</strong> — the result was delivered, but at degraded quality. The computation took longer than expected, or the supervisor had to absorb a crash and return a diagnostic instead of the real result. The mass arrived, but it's not what was hoped for. In ΔQ's terms, the quality was attenuated at a mitigation point.</p>
+
+<p><strong>Intangible</strong> — the mass is permanently lost. The computation will never produce a result. The variable will never be bound. This is the state from which there is no recovery — it can only cascade upward through the supervision tree.</p>
+
+<p>The key insight of ΔQ is that these transitions are <strong>monotonic</strong>. Mass moves toward delivery or loss. You can attenuate quality — deliver a degraded result — but you cannot un-deliver or un-lose. This monotonicity is what makes the model compositional: the ΔQ of a composite system can be computed from the ΔQs of its parts.</p>
+
+<h2>Where <span class="accent">Collet</span> meets ΔQ</h2>
+
+<p>Raphaël Collet's 2007 thesis, <em>The Limits of Network Transparency in a Distributed Programming Language</em>, introduced asynchronous failure handling for the Oz/Mozart distributed programming system. Joe Armstrong — the creator of Erlang — sat on the thesis jury, which tells you something about the calibre of the work and the directness of the lineage between Erlang's fault tolerance philosophy and Collet's formalisation of it. His key contribution was the <strong>fault stream</strong> — an asynchronous, separate channel through which failures are observed, decoupled from the data variables they affect.</p>
+
+<p>Collet's model defines three failure detectors — <code>tempFail</code>, <code>permFail</code>, and <code>localFail</code> — each with distinct properties of completeness, accuracy, and monotonicity. The <code>tempFail</code> detector is non-monotonic: it can suspect a process and then change its mind. The <code>permFail</code> detector is monotonic and accurate: once it declares failure, the declaration is final and never wrong. This maps directly to the ΔQ mass states: <code>tempFail</code> is mass that might still arrive (tangible but delayed), while <code>permFail</code> is mass that's gone (intangible).</p>
+
+<p>In Munu, these two frameworks are not two subsystems bolted together. <strong>The supervisor is both the ΔQ mitigation point and the Collet failure authority.</strong> When a supervisor absorbs a child crash — binding the result variable to a diagnostic string — it is simultaneously performing Collet's asynchronous failure handling and ΔQ's quality attenuation at the mitigation point. One mechanism, one entity, two theoretical frameworks unified.</p>
+
+<h2>The <span class="accent">two-level</span> quality authority</h2>
+
+<p>This is where the <code>do</code> and <code>must</code> clauses map onto the failure model with precision that goes beyond what either Collet or ΔQ alone can express.</p>
+
+<h3>The do clause: self-measurement</h3>
+
+<p>The <code>do</code> clause is the process's own observation of its behaviour. When a process violates its <code>do</code> formula — it crashes, times out, produces an unexpected event — it's performing <strong>self-measurement of quality</strong>. In ΔQ terms, the process is saying "I know my output is wrong." In Collet's terms, the process's own coalgebra fires first.</p>
+
+<p>A <code>do</code> violation triggers <code>TempFail</code>. The mass stays tangible — the supervisor can restart the process, and the result variable remains unbound, waiting for a new attempt. The system has detected non-determinism and is taking the fast path back to a known state: kill the process, restart it, try again. This is Erlang's "let it crash" philosophy expressed as a temporal property.</p>
+
+<h3>The must clause: authority measurement</h3>
+
+<p>The <code>must</code> clause is the supervisor's obligation on the supervised process. It specifies what the process <em>must</em> do — not what happens when it fails, but what properties its execution must satisfy. When a process violates its <code>must</code> formula, the supervisor declares <code>PermFail</code>. The mass becomes <strong>intangible</strong>.</p>
+
+<p>This distinction matters enormously. A <code>do</code> violation is the process admitting it entered a non-deterministic state — and the response is to try to recover determinism through restart. A <code>must</code> violation is the authority declaring that the process has breached its contract — and the response is permanent failure, because <strong>the process has demonstrated that it cannot be trusted to return to determinism</strong>.</p>
+
+<blockquote>TempFail means the system can try again. PermFail means it must not.</blockquote>
+
+<h2><span class="accent">CDF breaching</span> as the correct failure signal</h2>
+
+<p>This is where ΔQ and modal mu-calculus fuse in a way that neither framework achieves alone.</p>
+
+<p>ΔQ models quality attenuation as an <strong>Improper Random Variable</strong> (IRV) — a cumulative distribution function (CDF) whose total probability is less than 1. The gap between the CDF's limit and 1.0 represents the probability of failure — mass that will never arrive. This is not a timeout. It's a probabilistic envelope: "95% of the time, this operation completes within 100ms; 99% of the time, within 500ms."</p>
+
+<p>In Munu, these envelopes are attached to behaviour formulas using the <code>~</code> operator:</p>
+
+<p><code>nu Y. [fail(self, _)]~fast_response &lt;restart(self)&gt; Y</code></p>
+
+<p>The <code>~fast_response</code> is a CDF declaration: <code>cdf fast_response = [(100ms, 0.95), (500ms, 0.99)]</code>. It says: if a fail event occurs, it must occur within this timing envelope. Not "within 500ms" — within a <em>distribution</em> of times, because real systems don't have hard deadlines, they have probabilistic ones.</p>
+
+<p><strong>Breaching a CDF is the correct signal for TempFail.</strong> Not a timeout — a statistical violation. The process is still running, but it's outside the envelope of expected behaviour. It has entered a non-deterministic regime where its timing is no longer predictable. The supervisor puts it into TempFail and restarts: mass stays tangible, but the process that's producing it gets a fresh start.</p>
+
+<p><strong>Breaching the <code>must</code> formula is the correct signal for PermFail.</strong> The process didn't just run slowly — it did something it was contractually forbidden to do. The authority has spoken: this mass is intangible. Cascade the failure upward.</p>
+
+<h2>Non-determinism as the <span class="accent">unifying enemy</span></h2>
+
+<p>Every concept in this model is a weapon against non-determinism:</p>
+
+<table class="state-table">
+<tr><th>Source of non-determinism</th><th>How Munu constrains it</th></tr>
+<tr><td>Message ordering</td><td>Single-assignment dataflow variables. Reads block until bound. No mailbox, no ordering ambiguity.</td></tr>
+<tr><td>Timing uncertainty</td><td>ΔQ CDFs on behaviour modalities. The acceptable timing <em>distribution</em> is part of the contract.</td></tr>
+<tr><td>Process failure</td><td>Collet-style fault streams, observed by the supervisor's coalgebra. Failure is asynchronous and separate from data.</td></tr>
+<tr><td>Recovery uncertainty</td><td>Modal mu-calculus <code>do</code> formulas. The recovery protocol is a temporal property, not ad-hoc code.</td></tr>
+<tr><td>Contract violation</td><td>Modal mu-calculus <code>must</code> formulas. Breach → PermFail. The process is removed from the system.</td></tr>
+<tr><td>Cascading failure</td><td>ΔQ mass monotonicity. Intangible mass propagates upward through the supervision tree until an ancestor absorbs or the root accepts.</td></tr>
+</table>
+
+<p>The modal mu-calculus is what ties all of this together. It's the language that lets you <strong>draw the line between deterministic and non-deterministic execution</strong>. Everything the formula accepts is within the deterministic envelope — the system is behaving as specified. Everything the formula rejects is non-deterministic — the system has left the space of acceptable behaviour, and the response is to return to determinism as fast as possible: restart (TempFail) if recovery is possible, escalate (PermFail) if it isn't.</p>
+
+<p>This is why modal mu-calculus is the correct choice, not just a convenient one. It is the most expressive temporal logic in the branching-time hierarchy. It can express any property that CTL*, LTL, or Hennessy-Milner logic can express — and properties that none of them can. When you need to specify the boundary between acceptable and unacceptable behaviour in a distributed system, you need a logic that can express every temporal property you might care about. Modal mu-calculus is that logic.</p>
+
+<h2>The <span class="accent">absorb</span> operation</h2>
+
+<p>There is one more piece that makes the unification concrete: the <strong>absorb</strong> operation.</p>
+
+<p>When a child process crashes and the supervisor decides to absorb the failure, the kernel does something remarkable: it <em>binds the child's result variable</em> to a crash diagnostic. Not an error code. Not an exception. A bound variable — the same <code>bind()</code> operation that a successful computation uses.</p>
+
+<p>The parent thread, suspended on that variable, wakes up and gets a value. It does not know whether the value came from successful completion or from a formatted crash diagnostic. The variable carries no "this was an error" metadata. It is just a bound string.</p>
+
+<p>This is ΔQ's quality attenuation made concrete. The mass was heading toward intangible — the child crashed, the result was about to be lost. The supervisor, acting as both the Collet failure authority and the ΔQ mitigation point, intervened. It converted intangible mass back to tangible mass at degraded quality. The result arrived, but it's a crash diagnostic instead of the computed value. Attenuated, but delivered.</p>
+
+<p>The parent can now make its own decision about what to do with the attenuated result — retry with different parameters, fall back to a cached value, propagate the diagnostic upstream. The non-determinism has been contained: the system has returned to a deterministic state where every variable is either bound or permanently failed, and every process knows which.</p>
+
+<blockquote>Determinism is not the absence of failure. It's the property that every failure has a specified, verifiable response.</blockquote>
+
+<hr>
+
+<div class="aside">
+  <div class="aside-label">References</div>
+  <ul class="ref-list">
+    <li><span class="ref-num">[1]</span> Haeri, S.H.; Thompson, P.; Davies, N.; Van Roy, P.; Hammond, K.; Chapman, J. <em>Mind Your Outcomes: The ΔQSD Paradigm for Quality-Centric Systems Development and Its Application to a Blockchain Case Study.</em> Computers 2022, 11, 45. <a href="https://doi.org/10.3390/computers11030045" style="color:var(--accent)">doi:10.3390/computers11030045</a></li>
+    <li><span class="ref-num">[2]</span> Collet, R. <em>The Limits of Network Transparency in a Distributed Programming Language.</em> PhD thesis, Université catholique de Louvain, December 2007.</li>
+    <li><span class="ref-num">[3]</span> Davies, N.; Thompson, P. <em>ΔQ — a new approach to understanding quality in distributed systems.</em> Proceedings of the 28th IEEE International Performance Computing and Communications Conference (IPCCC), 2009.</li>
+  </ul>
+</div>
+
+<div class="post-nav">
+  <a href="blog-modal-mu-calculus.html">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M13 8H3M8 3L3 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Why modal mu-calculus for behaviours
+  </a>
+</div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div id="footer-slot"></div>
+
+<script src="assets/page.js"></script>
+<script src="assets/network-bg.js"></script>
+<script> setupPage({ active: "blog" }); </script>
+</body>
+</html>
