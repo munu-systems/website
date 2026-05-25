@@ -51,7 +51,7 @@
         '<div class="footer-stats">' +
           '<div class="footer-stat"><div class="label">License</div><div class="value">MPL-2.0</div></div>' +
           '<div class="footer-stat"><div class="label">Implementation</div><div class="value">Rust</div></div>' +
-          '<div class="footer-stat"><div class="label">Kernel</div><div class="value">no_std · 36 opcodes</div></div>' +
+          '<div class="footer-stat"><div class="label">Kernel</div><div class="value">no_std · 77 opcodes</div></div>' +
           '<div class="footer-stat"><div class="label">Type System</div><div class="value">ψ-lattice</div></div>' +
         '</div>' +
         '<div class="footer-grid">' +

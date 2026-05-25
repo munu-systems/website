@@ -236,10 +236,7 @@
             <span></span>
           </div>
 <pre><span class="com">// mu: finite, builds a value</span>
-<span class="kw">mu</span> <span class="fn">double</span><span class="pn">(</span>n<span class="pn">:</span> i64<span class="pn">)</span> <span class="pn">-&gt;</span> i64
-  <span class="kw">requires</span> n <span class="pn">&gt;</span> <span class="num">0</span>
-  <span class="kw">ensures</span>  <span class="pn">(</span>r<span class="pn">)</span> r <span class="pn">&gt;</span> n
-<span class="pn">{</span>
+<span class="kw">mu</span> <span class="fn">double</span><span class="pn">(</span>n<span class="pn">:</span> i64<span class="pn">)</span> <span class="pn">-&gt;</span> i64 <span class="pn">{</span>
   n <span class="pn">=&gt;</span> n <span class="pn">*</span> <span class="num">2</span>
 <span class="pn">}</span>
 
@@ -250,10 +247,9 @@
 
 <span class="com">// contract: supervises both</span>
 <span class="kw">pub contract</span> <span class="fn">Echo</span><span class="pn">(</span>msg<span class="pn">:</span> Msg<span class="pn">)</span> <span class="pn">-&gt;</span> <span class="pn">[</span>Msg<span class="pn">]</span>
-    <span class="kw">behaviour</span> <span class="pn">{</span>
-        <span class="kw">do:</span> <span class="kw">nu</span> X<span class="pn">.</span> <span class="pn">[</span>_<span class="pn">]</span> X
-    <span class="pn">}</span>
-<span class="pn">{</span> <span class="kw">spawn</span> echo_loop<span class="pn">(</span>msg<span class="pn">)</span> <span class="pn">}</span></pre>
+    <span class="kw">behaviour</span> <span class="pn">{</span> <span class="kw">do:</span> <span class="kw">nu</span> X<span class="pn">.</span> <span class="pn">[</span>_<span class="pn">]</span> X <span class="pn">}</span> <span class="pn">{</span>
+  <span class="kw">spawn</span> echo_loop<span class="pn">(</span>msg<span class="pn">)</span>
+<span class="pn">}</span></pre>
         </div>
       </div>
     </div>

@@ -441,12 +441,12 @@
 <span class="kw">cdf</span> <span class="fn">fast_response</span> <span class="pn">=</span> <span class="pn">[(</span><span class="num">100ms</span><span class="pn">,</span> <span class="num">0.95</span><span class="pn">),</span> <span class="pn">(</span><span class="num">500ms</span><span class="pn">,</span> <span class="num">0.99</span><span class="pn">)]</span>
 
 <span class="kw">mu</span> <span class="fn">nand</span><span class="pn">(</span>a<span class="pn">:</span> bool<span class="pn">,</span> b<span class="pn">:</span> bool<span class="pn">)</span> <span class="pn">-&gt;</span> bool <span class="pn">{</span>
-    <span class="kw">true</span><span class="pn">,</span> <span class="kw">true</span> <span class="pn">=&gt;</span> <span class="kw">false</span><span class="pn">,</span>
-    _<span class="pn">,</span> _ <span class="pn">=&gt;</span> <span class="kw">true</span>
+    <span class="pn">(</span><span class="kw">true</span><span class="pn">,</span> <span class="kw">true</span><span class="pn">)</span> <span class="pn">=&gt;</span> <span class="kw">false</span><span class="pn">,</span>
+    <span class="pn">(</span>_<span class="pn">,</span> _<span class="pn">)</span> <span class="pn">=&gt;</span> <span class="kw">true</span>
 <span class="pn">}</span>
 
 <span class="kw">nu</span> <span class="fn">nand_combine</span><span class="pn">(</span>a_s<span class="pn">:</span> <span class="pn">[</span>bool<span class="pn">],</span> b_s<span class="pn">:</span> <span class="pn">[</span>bool<span class="pn">])</span> <span class="pn">-&gt;</span> <span class="pn">[</span>bool<span class="pn">]</span> <span class="pn">{</span>
-    <span class="pn">[</span>a <span class="pn">|</span> at<span class="pn">],</span> <span class="pn">[</span>b <span class="pn">|</span> bt<span class="pn">]</span> <span class="pn">=&gt;</span>
+    <span class="pn">(</span><span class="pn">[</span>a <span class="pn">|</span> at<span class="pn">],</span> <span class="pn">[</span>b <span class="pn">|</span> bt<span class="pn">])</span> <span class="pn">=&gt;</span>
         <span class="pn">[</span>nand<span class="pn">(</span>a<span class="pn">,</span> b<span class="pn">)</span> <span class="pn">|</span> nand_combine<span class="pn">(</span>at<span class="pn">,</span> bt<span class="pn">)]</span>
 <span class="pn">}</span>
 
@@ -591,7 +591,7 @@
 <span class="pn">}</span>
 
 <span class="kw">mu</span> <span class="fn">head_of</span><span class="pn">(</span>xs<span class="pn">:</span> <span class="pn">[</span>i64<span class="pn">])</span> <span class="pn">-&gt;</span> i64 <span class="pn">{</span>
-  <span class="pn">[</span>h <span class="pn">|</span> _<span class="pn">]</span> <span class="pn">=&gt;</span> h
+  <span class="pn">([</span>h <span class="pn">|</span> _<span class="pn">])</span> <span class="pn">=&gt;</span> h
 <span class="pn">}</span>
 
 <span class="kw">pub contract</span> <span class="fn">Eager</span><span class="pn">(</span>n<span class="pn">:</span> i64<span class="pn">)</span> <span class="pn">-&gt;</span> <span class="pn">[</span>i64<span class="pn">]</span> <span class="pn">{</span>
@@ -609,7 +609,7 @@
 
                 <div class="contract-row ready" data-contract="e1">
                   <span class="cname">contract Eager</span>
-                  <span class="cbody">let stream = spawn produce(n); head_of(stream)</span>
+                  <span class="cbody">let stream = spawn produce(n); spawn head_of(stream)</span>
                   <span class="cstatus">Ready</span>
                 </div>
                 <div class="contract-row ready" data-contract="e2">
@@ -644,11 +644,11 @@
               </div>
 <pre><span class="com">// body does not run until result is demanded</span>
 <span class="kw">lazy mu</span> <span class="fn">compute</span><span class="pn">(</span>n<span class="pn">:</span> i64<span class="pn">)</span> <span class="pn">-&gt;</span> i64 <span class="pn">{</span>
-  n <span class="pn">=&gt;</span> n <span class="pn">*</span> <span class="num">2</span>
+  <span class="pn">(</span>n<span class="pn">)</span> <span class="pn">=&gt;</span> n <span class="pn">*</span> <span class="num">2</span>
 <span class="pn">}</span>
 
 <span class="kw">mu</span> <span class="fn">use_result</span><span class="pn">(</span>n<span class="pn">:</span> i64<span class="pn">)</span> <span class="pn">-&gt;</span> i64 <span class="pn">{</span>
-  n <span class="pn">=&gt;</span> <span class="pn">{</span>
+  <span class="pn">(</span>n<span class="pn">)</span> <span class="pn">=&gt;</span> <span class="pn">{</span>
     <span class="kw">let</span> result <span class="pn">=</span> compute<span class="pn">(</span>n<span class="pn">);</span>  <span class="com">// returns WaitNeeded — body does not run</span>
     result <span class="pn">+</span> <span class="num">5</span>              <span class="com">// demands result → body wakes, returns 25</span>
   <span class="pn">}</span>

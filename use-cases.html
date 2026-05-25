@@ -209,7 +209,7 @@
             <li>Formal bounds on agent behaviour — not just prompt engineering</li>
             <li>Supervision trees that escalate, restart, or terminate agents</li>
             <li>Structured diagnostics that LLMs can parse and self-correct from</li>
-            <li>Compose agent capabilities via lattice subsumption (<code>⊑</code>)</li>
+            <li>Compose agent capabilities via lattice subsumption (⊑)</li>
           </ul>
         </div>
 
@@ -220,7 +220,7 @@
             <span></span>
           </div>
 <pre><span class="kw">nu</span> <span class="fn">serve</span><span class="pn">(</span>requests<span class="pn">:</span> Stream<span class="pn">&lt;</span>Query<span class="pn">&gt;,</span> tools<span class="pn">:</span> ToolSet<span class="pn">)</span> <span class="pn">-&gt;</span> Result <span class="pn">{</span>
-    requests<span class="pn">,</span> tools <span class="pn">=&gt;</span> <span class="pn">{</span>
+    <span class="pn">(</span>requests<span class="pn">,</span> tools<span class="pn">)</span> <span class="pn">=&gt;</span> <span class="pn">{</span>
         tools.call<span class="pn">(</span>requests.head<span class="pn">)</span>
     <span class="pn">}</span>
 <span class="pn">}</span>
@@ -282,7 +282,7 @@
   <span class="kw">requires</span> channel <span class="pn">&gt;</span> <span class="num">0</span>
   <span class="kw">ensures</span>  <span class="pn">(</span>t<span class="pn">)</span> t <span class="pn">&gt;=</span> <span class="num">-40</span> <span class="pn">&amp;&amp;</span> t <span class="pn">&lt;=</span> <span class="num">125</span>
 <span class="pn">{</span>
-  channel <span class="pn">=&gt;</span> sensor_read<span class="pn">(</span>channel<span class="pn">)</span>
+  <span class="pn">(</span>channel<span class="pn">)</span> <span class="pn">=&gt;</span> sensor_read<span class="pn">(</span>channel<span class="pn">)</span>
 <span class="pn">}</span>
 
 <span class="kw">pub contract</span> <span class="fn">SensorDriver</span><span class="pn">(</span>channel<span class="pn">:</span> u64<span class="pn">)</span> <span class="pn">-&gt;</span> <span class="pn">[</span>u64<span class="pn">]</span>
@@ -388,7 +388,7 @@
             <li>Security built into the wire — BlackFrame encryption on every hop</li>
             <li>Same verified bytecode on Cortex-M0, in WASM, and on a server</li>
             <li>No TLS, no certificates, no handshake — Ed25519 identity from the seed</li>
-            <li>Kernel is <code>no_std</code> — no heap, no OS, cooperative scheduling</li>
+            <li>no_std kernel — no heap, no OS, cooperative scheduling</li>
           </ul>
         </div>
 
@@ -403,7 +403,7 @@
 <span class="kw">extern mu</span> <span class="fn">sensor_read</span><span class="pn">(</span>channel<span class="pn">:</span> u64<span class="pn">)</span> <span class="pn">-&gt;</span> u64<span class="pn">;</span>
 
 <span class="kw">nu</span> <span class="fn">sensor_loop</span><span class="pn">(</span>channel<span class="pn">:</span> u64<span class="pn">)</span> <span class="pn">-&gt;</span> u64 <span class="pn">{</span>
-    channel <span class="pn">=&gt;</span> sensor_read<span class="pn">(</span>channel<span class="pn">)</span>
+    <span class="pn">(</span>channel<span class="pn">)</span> <span class="pn">=&gt;</span> sensor_read<span class="pn">(</span>channel<span class="pn">)</span>
 <span class="pn">}</span>
 
 <span class="kw">pub contract</span> <span class="fn">SensorPair</span><span class="pn">(</span>channel<span class="pn">:</span> u64<span class="pn">)</span> <span class="pn">-&gt;</span> <span class="pn">[</span>u64<span class="pn">]</span>
@@ -445,7 +445,7 @@
         <div class="why-block">
           <div class="why-label">Why Munu</div>
           <ul>
-            <li>Termination proofs via <code>decreases</code> measures</li>
+            <li>Termination proofs via decreases measures</li>
             <li>Pre/post conditions checked at compile time</li>
             <li>Lattice-based type inference catches contradictions early</li>
             <li>No separate proof language — verification in the source</li>
