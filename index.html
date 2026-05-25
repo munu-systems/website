@@ -161,6 +161,7 @@
       <h1 class="wordmark fade-up d1"><span class="mu">mu</span><span class="nu">nu</span></h1>
       <p class="lede fade-up d2">
         A distributed programming language and harness built for LLMs to read, write, and prove correct.
+        Contracts in, verified bytecode out. The kernel runs everywhere — MCU to cloud.
       </p>
       <div class="cta-row fade-up d3">
         <a class="btn btn-primary" href="get-started.html">
@@ -190,18 +191,6 @@
           <p><code>requires</code>/<code>ensures</code> prove correctness at compile time. The LLM can hallucinate — the contract won't verify.</p>
         </div>
         <div class="card">
-          <h3>Long-range dependencies</h3>
-          <p>Contracts carry their obligations inline. No chasing through files — the spec, the proof, and the recovery are one construct.</p>
-        </div>
-        <div class="card">
-          <h3>Arithmetic errors</h3>
-          <p>LLMs still trip on routine calculations. In munu-code the LLM doesn't simulate the answer — it writes a mu function, runs it on the kernel, and gets the exact result. The language is the calculator.</p>
-        </div>
-        <div class="card">
-          <h3>Termination</h3>
-          <p><code>decreases</code> proves the recursion terminates. No infinite loop survives compilation.</p>
-        </div>
-        <div class="card">
           <h3>Mutation tracking</h3>
           <p>Variables bind once. No reassignment, no temporal state, nothing for the LLM to simulate step-by-step.</p>
         </div>
@@ -210,81 +199,9 @@
           <p>Dataflow variables have a 6-state lifecycle enforced by the kernel. Reads block until bound. There is no race to reason about.</p>
         </div>
         <div class="card">
-          <h3>Implicit invariants</h3>
-          <p>The <code>behaviour</code> clause <em>is</em> the invariant. It compiles to a Mealy table the kernel enforces. Not a comment. Not a convention. Not optional.</p>
-        </div>
-        <div class="card">
           <h3>Ambiguous errors</h3>
           <p>The diagnostic is a structured envelope: failing constraint, AST position, counter-example, candidate fixes. The LLM applies the fix — it doesn't interpret prose.</p>
         </div>
-        <div class="card">
-          <h3>Overconfidence</h3>
-          <p>Confidence is irrelevant. The compiler proves or rejects. There is no "looks right."</p>
-        </div>
-        <div class="card">
-          <h3>Type confusion</h3>
-          <p>Types are ordered by subsumption (⊑) on a lattice. The compiler catches contradictions the LLM will never notice — because the LLM doesn't do lattice arithmetic.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <div class="container">
-      <div class="section-head" style="margin-bottom: 48px;">
-        <div class="eyebrow center" style="justify-content:center; display:flex;">The Compiler Talks to LLMs</div>
-        <h2>Errors written for the <span class="accent">machine</span>.</h2>
-        <p class="lede">Every other compiler emits prose. Munu emits a JSON envelope with the failing constraint, the AST positions, a candidate-fix vector, and the smallest counter-example. LLMs patch; humans review the diff.</p>
-      </div>
-
-      <div class="grid-2">
-        <div class="code-window">
-          <div class="code-window-head">
-            <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-            <span>conventional · ambiguous</span>
-            <span></span>
-          </div>
-<pre><span class="err">error[E0308]</span>: mismatched types
-  <span class="pn">--&gt;</span> src/main.uv:14:18
-   <span class="pn">|</span>
-<span class="num">14</span> <span class="pn">|</span>     <span class="kw">let</span> n: <span class="kw">u64</span> = raw
-   <span class="pn">|</span>                  <span class="err">^^^ expected u64, found ψ</span>
-   <span class="pn">|</span>
-   <span class="pn">=</span> <span class="com">help: add a cast</span>
-
-<span class="com"># LLMs must parse English, guess intent,
-# infer the patch from sparse context.</span></pre>
-        </div>
-
-        <div class="code-window">
-          <div class="code-window-head">
-            <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-            <span>munu · structured · addressable</span>
-            <span style="color: var(--accent);">⌘ LLM-ready</span>
-          </div>
-<pre><span class="pn">{</span>
-  <span class="str">"code"</span><span class="pn">:</span>       <span class="str">"M.subsume.fail"</span><span class="pn">,</span>
-  <span class="str">"operator"</span><span class="pn">:</span>   <span class="str">"⊑"</span><span class="pn">,</span>
-  <span class="str">"expected"</span><span class="pn">:</span>   <span class="str">"u64"</span><span class="pn">,</span>
-  <span class="str">"got"</span><span class="pn">:</span>        <span class="str">"ψ"</span><span class="pn">,</span>
-  <span class="str">"site"</span><span class="pn">:</span>       <span class="str">"src/main.uv:14:18..14:21"</span><span class="pn">,</span>
-  <span class="str">"ast_node"</span><span class="pn">:</span>   <span class="str">"@blake2b:f12a…"</span><span class="pn">,</span>
-  <span class="str">"constraint"</span><span class="pn">:</span> <span class="str">"ψ ⊑ u64"</span><span class="pn">,</span>
-  <span class="str">"witness"</span><span class="pn">:</span>    <span class="pn">{</span> <span class="str">"raw"</span><span class="pn">:</span> <span class="str">"-3.14"</span> <span class="pn">},</span>
-  <span class="str">"fixes"</span><span class="pn">:</span> <span class="pn">[</span>
-    <span class="pn">{</span> <span class="str">"k"</span><span class="pn">:</span> <span class="str">"insert_cast"</span><span class="pn">,</span>  <span class="str">"term"</span><span class="pn">:</span> <span class="str">"raw as u64"</span> <span class="pn">},</span>
-    <span class="pn">{</span> <span class="str">"k"</span><span class="pn">:</span> <span class="str">"widen_target"</span><span class="pn">,</span> <span class="str">"term"</span><span class="pn">:</span> <span class="str">"i64"</span> <span class="pn">}</span>
-  <span class="pn">]</span>
-<span class="pn">}</span></pre>
-        </div>
-      </div>
-
-      <div class="row center mt-48" style="gap: 32px; color: var(--text-mute); font-size: 14px;">
-        <span><span style="color: var(--accent); font-weight: 600;">1st reader:</span> the compiler</span>
-        <span style="color: var(--text-dim);">→</span>
-        <span><span style="color: var(--accent); font-weight: 600;">2nd reader:</span> LLMs</span>
-        <span style="color: var(--text-dim);">→</span>
-        <span><span style="color: var(--accent); font-weight: 600;">3rd reader:</span> the human</span>
       </div>
     </div>
   </section>
@@ -294,9 +211,8 @@
       <div class="taste-grid">
         <div>
           <div class="eyebrow">A taste of Munu</div>
-          <h2>Contracts <span class="accent">all the way down</span>.</h2>
-          <p>Every contract runs on its own lightweight thread in the kernel. A contract binds mu functions (what you <em>build</em>) and nu functions (what you <em>observe</em>) under a supervised behaviour. The <code>do:</code> clause governs local failure recovery. The <code>must:</code> clause is the obligation the supervisor enforces. When a thread crashes, it crashes only that contract — the supervisor decides whether to absorb the failure and deliver a degraded result, restart, or escalate.</p>
-          <p>When an LLM's generated code crashes at runtime, the supervisor catches the thread failure, formats a structured diagnostic, and feeds it back through the same dataflow variable the caller is waiting on. The LLM sees what went wrong, fixes the code, and retries — without losing context. The harness turns a thread crash into a conversation.</p>
+          <h2>What it <span class="accent">looks like</span>.</h2>
+          <p>A mu function builds a finite value. A nu function observes an infinite stream. A contract supervises both — if it crashes, the <code>behaviour</code> clause decides what happens next.</p>
           <a class="deep" href="methodology.html">
             Deep dive into the methodology
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -306,49 +222,28 @@
         <div class="code-window">
           <div class="code-window-head">
             <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-            <span>supervised_pipeline.uv</span>
+            <span>echo.uv</span>
             <span></span>
           </div>
-<pre><span class="com">// timing envelope: 95% within 100ms, 99% within 500ms</span>
-<span class="kw">cdf</span> <span class="fn">fast_response</span> <span class="pn">=</span> <span class="pn">[(</span><span class="num">100ms</span><span class="pn">,</span> <span class="num">0.95</span><span class="pn">),</span> <span class="pn">(</span><span class="num">500ms</span><span class="pn">,</span> <span class="num">0.99</span><span class="pn">)]</span>
-
-<span class="kw">mu</span> <span class="fn">nand</span><span class="pn">(</span>a<span class="pn">:</span> bool<span class="pn">,</span> b<span class="pn">:</span> bool<span class="pn">)</span> <span class="pn">-&gt;</span> bool <span class="pn">{</span>
-    <span class="kw">true</span><span class="pn">,</span> <span class="kw">true</span> <span class="pn">=&gt;</span> <span class="kw">false</span><span class="pn">,</span>
-    _<span class="pn">,</span> _ <span class="pn">=&gt;</span> <span class="kw">true</span>
+<pre><span class="com">// mu: finite, builds a value</span>
+<span class="kw">mu</span> <span class="fn">double</span><span class="pn">(</span>n<span class="pn">:</span> i64<span class="pn">)</span> <span class="pn">-&gt;</span> i64
+  <span class="kw">requires</span> n <span class="pn">&gt;</span> <span class="num">0</span>
+  <span class="kw">ensures</span>  <span class="pn">(</span>r<span class="pn">)</span> r <span class="pn">&gt;</span> n
+<span class="pn">{</span>
+  n <span class="pn">=&gt;</span> n <span class="pn">*</span> <span class="num">2</span>
 <span class="pn">}</span>
 
-<span class="kw">nu</span> <span class="fn">nand_combine</span><span class="pn">(</span>a_s<span class="pn">:</span> <span class="pn">[</span>bool<span class="pn">],</span> b_s<span class="pn">:</span> <span class="pn">[</span>bool<span class="pn">])</span> <span class="pn">-&gt;</span> <span class="pn">[</span>bool<span class="pn">]</span> <span class="pn">{</span>
-    <span class="pn">[</span>a <span class="pn">|</span> at<span class="pn">],</span> <span class="pn">[</span>b <span class="pn">|</span> bt<span class="pn">]</span> <span class="pn">=&gt;</span>
-        <span class="pn">[</span>nand<span class="pn">(</span>a<span class="pn">,</span> b<span class="pn">)</span> <span class="pn">|</span> nand_combine<span class="pn">(</span>at<span class="pn">,</span> bt<span class="pn">)]</span>
+<span class="com">// nu: infinite, observes a stream</span>
+<span class="kw">nu</span> <span class="fn">echo_loop</span><span class="pn">(</span>msg<span class="pn">:</span> Msg<span class="pn">)</span> <span class="pn">-&gt;</span> <span class="pn">[</span>Msg<span class="pn">]</span> <span class="pn">{</span>
+  msg <span class="pn">=&gt;</span> <span class="pn">[</span>msg <span class="pn">|</span> echo_loop<span class="pn">(</span>msg<span class="pn">)]</span>
 <span class="pn">}</span>
 
-<span class="kw">pub contract</span> <span class="fn">NandGate</span><span class="pn">(</span>a<span class="pn">:</span> <span class="pn">[</span>bool<span class="pn">],</span> b<span class="pn">:</span> <span class="pn">[</span>bool<span class="pn">])</span> <span class="pn">-&gt;</span> <span class="pn">[</span>bool<span class="pn">]</span>
-    <span class="kw">behaviour</span> <span class="pn">{</span>
-        <span class="kw">do:</span>
-            <span class="kw">nu</span> X<span class="pn">.</span>
-                <span class="pn">[</span>fail<span class="pn">(</span><span class="kw">self</span><span class="pn">,</span> _<span class="pn">)]</span>
-                    <span class="pn">&lt;</span>restart<span class="pn">(</span><span class="kw">self</span><span class="pn">)&gt;</span> X
-                <span class="kw">and</span> <span class="pn">[</span>_<span class="pn">]</span> X
-        <span class="com">// the parent enforces this deadline</span>
-        <span class="kw">must:</span>
-            <span class="kw">nu</span> Y<span class="pn">.</span>
-                <span class="pn">[</span>fail<span class="pn">(</span><span class="kw">self</span><span class="pn">,</span> _<span class="pn">)]</span><span class="pn">~</span><span class="fn">fast_response</span>
-                    <span class="pn">&lt;</span>restart<span class="pn">(</span><span class="kw">self</span><span class="pn">)&gt;</span> Y
-    <span class="pn">}</span>
-<span class="pn">{</span> nand_combine<span class="pn">(</span>a<span class="pn">,</span> b<span class="pn">)</span> <span class="pn">}</span>
-
-<span class="com">// AndGate supervises two NandGates</span>
-<span class="com">// the must: deadlines are conjoined into</span>
-<span class="com">// AndGate's Mealy table by the compiler</span>
-<span class="kw">pub contract</span> <span class="fn">AndGate</span><span class="pn">(</span>a<span class="pn">:</span> <span class="pn">[</span>bool<span class="pn">],</span> b<span class="pn">:</span> <span class="pn">[</span>bool<span class="pn">])</span> <span class="pn">-&gt;</span> <span class="pn">[</span>bool<span class="pn">]</span>
+<span class="com">// contract: supervises both</span>
+<span class="kw">pub contract</span> <span class="fn">Echo</span><span class="pn">(</span>msg<span class="pn">:</span> Msg<span class="pn">)</span> <span class="pn">-&gt;</span> <span class="pn">[</span>Msg<span class="pn">]</span>
     <span class="kw">behaviour</span> <span class="pn">{</span>
         <span class="kw">do:</span> <span class="kw">nu</span> X<span class="pn">.</span> <span class="pn">[</span>_<span class="pn">]</span> X
-        <span class="kw">must:</span> <span class="kw">true</span>
     <span class="pn">}</span>
-<span class="pn">{</span>
-    <span class="kw">let</span> nand_out <span class="pn">=</span> NandGate<span class="pn">(</span>a<span class="pn">,</span> b<span class="pn">);</span>
-    NandGate<span class="pn">(</span>nand_out<span class="pn">,</span> nand_out<span class="pn">)</span>
-<span class="pn">}</span></pre>
+<span class="pn">{</span> <span class="kw">spawn</span> echo_loop<span class="pn">(</span>msg<span class="pn">)</span> <span class="pn">}</span></pre>
         </div>
       </div>
     </div>
@@ -358,7 +253,7 @@
     <div class="container">
       <div class="section-head">
         <div class="eyebrow center" style="justify-content:center; display:flex;">Built For</div>
-        <h2>Where LLMs meet the <span class="accent">real world</span>.</h2>
+        <h2>Where contracts meet the <span class="accent">real world</span>.</h2>
       </div>
 
       <div class="uc-grid">
@@ -374,7 +269,7 @@
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg>
           </div>
           <h4>Embedded Systems</h4>
-          <p>Verified firmware on Cortex-M0 &amp; RISC-V</p>
+          <p>no_std kernel — no heap, no OS, bare metal</p>
         </div>
         <div class="uc-card">
           <div class="uc-icon">

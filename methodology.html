@@ -404,8 +404,9 @@
           <!-- CONTRACTS -->
           <div class="chapter" id="contracts">
             <div class="chapter-num">§ 02 — Contracts</div>
-            <h2>Everything is a <span class="accent">contract</span>.</h2>
-            <p>Contracts are the construct that solves μ–ν at the language level. They are not coroutines wearing a hat. Each contract carries a <strong>behaviour clause</strong> — a <code>do:</code> that governs local failure, and a <code>must:</code> that is the obligation to its supervisor. The kernel steps bytecode; all supervision logic lives in source.</p>
+            <h2>Contracts <span class="accent">all the way down</span>.</h2>
+            <p>Every contract runs on its own lightweight thread in the kernel. A contract binds mu functions (what you <em>build</em>) and nu functions (what you <em>observe</em>) under a supervised behaviour. The <code>do:</code> clause governs local failure recovery. The <code>must:</code> clause is the obligation the supervisor enforces. When a thread crashes, it crashes only that contract — the supervisor decides whether to absorb the failure and deliver a degraded result, restart, or escalate.</p>
+            <p>When an LLM's generated code crashes at runtime, the supervisor catches the thread failure, formats a structured diagnostic, and feeds it back through the same dataflow variable the caller is waiting on. The LLM sees what went wrong, fixes the code, and retries — without losing context. The harness turns a thread crash into a conversation.</p>
 
             <div class="grid-2 mt-32">
               <div class="card">
@@ -423,21 +424,39 @@
             <div class="code-window mt-32">
               <div class="code-window-head">
                 <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                <span>supervised_gates.uv</span>
+                <span>supervised_pipeline.uv</span>
                 <span></span>
               </div>
-<pre><span class="com">// do: weathers the storm (TempFail + restart)</span>
-<span class="kw">formula</span> permanent<span class="pn">()</span> <span class="pn">{</span>
-  <span class="kw">nu</span> X<span class="pn">.</span> <span class="pn">[</span>fail<span class="pn">(</span><span class="kw">self</span><span class="pn">,</span> _<span class="pn">)]</span> <span class="pn">&lt;</span>restart<span class="pn">(</span><span class="kw">self</span><span class="pn">)&gt;</span> X
-       <span class="kw">and</span> <span class="pn">[</span>_<span class="pn">]</span> X
+<pre><span class="com">// timing envelope: 95% within 100ms, 99% within 500ms</span>
+<span class="kw">cdf</span> <span class="fn">fast_response</span> <span class="pn">=</span> <span class="pn">[(</span><span class="num">100ms</span><span class="pn">,</span> <span class="num">0.95</span><span class="pn">),</span> <span class="pn">(</span><span class="num">500ms</span><span class="pn">,</span> <span class="num">0.99</span><span class="pn">)]</span>
+
+<span class="kw">mu</span> <span class="fn">nand</span><span class="pn">(</span>a<span class="pn">:</span> bool<span class="pn">,</span> b<span class="pn">:</span> bool<span class="pn">)</span> <span class="pn">-&gt;</span> bool <span class="pn">{</span>
+    <span class="kw">true</span><span class="pn">,</span> <span class="kw">true</span> <span class="pn">=&gt;</span> <span class="kw">false</span><span class="pn">,</span>
+    _<span class="pn">,</span> _ <span class="pn">=&gt;</span> <span class="kw">true</span>
 <span class="pn">}</span>
 
-<span class="com">// do: two strikes, then escalate</span>
-<span class="kw">formula</span> two_strikes<span class="pn">()</span> <span class="pn">{</span>
-  <span class="kw">nu</span> X<span class="pn">.</span> <span class="pn">[</span>fail<span class="pn">(</span><span class="kw">self</span><span class="pn">,</span> _<span class="pn">)]</span> <span class="pn">&lt;</span>restart<span class="pn">(</span><span class="kw">self</span><span class="pn">)&gt;</span>
-    <span class="kw">nu</span> Y<span class="pn">.</span> <span class="pn">[</span>fail<span class="pn">(</span><span class="kw">self</span><span class="pn">,</span> _<span class="pn">)]</span> <span class="pn">&lt;</span>restart<span class="pn">(</span><span class="kw">self</span><span class="pn">)&gt;</span>
-      <span class="kw">nu</span> Z<span class="pn">.</span> <span class="pn">[</span>fail<span class="pn">(</span><span class="kw">self</span><span class="pn">,</span> _<span class="pn">)]</span> <span class="kw">false</span>
-           <span class="kw">and</span> <span class="pn">[</span>_<span class="pn">]</span> Z <span class="kw">and</span> <span class="pn">[</span>_<span class="pn">]</span> Y <span class="kw">and</span> <span class="pn">[</span>_<span class="pn">]</span> X
+<span class="kw">nu</span> <span class="fn">nand_combine</span><span class="pn">(</span>a_s<span class="pn">:</span> <span class="pn">[</span>bool<span class="pn">],</span> b_s<span class="pn">:</span> <span class="pn">[</span>bool<span class="pn">])</span> <span class="pn">-&gt;</span> <span class="pn">[</span>bool<span class="pn">]</span> <span class="pn">{</span>
+    <span class="pn">[</span>a <span class="pn">|</span> at<span class="pn">],</span> <span class="pn">[</span>b <span class="pn">|</span> bt<span class="pn">]</span> <span class="pn">=&gt;</span>
+        <span class="pn">[</span>nand<span class="pn">(</span>a<span class="pn">,</span> b<span class="pn">)</span> <span class="pn">|</span> nand_combine<span class="pn">(</span>at<span class="pn">,</span> bt<span class="pn">)]</span>
+<span class="pn">}</span>
+
+<span class="kw">pub contract</span> <span class="fn">NandGate</span><span class="pn">(</span>a<span class="pn">:</span> <span class="pn">[</span>bool<span class="pn">],</span> b<span class="pn">:</span> <span class="pn">[</span>bool<span class="pn">])</span> <span class="pn">-&gt;</span> <span class="pn">[</span>bool<span class="pn">]</span>
+    <span class="kw">behaviour</span> <span class="pn">{</span>
+        <span class="kw">do:</span>
+            <span class="kw">nu</span> X<span class="pn">.</span>
+                <span class="pn">[</span>fail<span class="pn">(</span><span class="kw">self</span><span class="pn">,</span> _<span class="pn">)]</span> <span class="pn">&lt;</span>restart<span class="pn">(</span><span class="kw">self</span><span class="pn">)&gt;</span> X
+                <span class="kw">and</span> <span class="pn">[</span>_<span class="pn">]</span> X
+        <span class="kw">must:</span>
+            <span class="kw">nu</span> Y<span class="pn">.</span>
+                <span class="pn">[</span>fail<span class="pn">(</span><span class="kw">self</span><span class="pn">,</span> _<span class="pn">)]</span><span class="pn">~</span><span class="fn">fast_response</span>
+                    <span class="pn">&lt;</span>restart<span class="pn">(</span><span class="kw">self</span><span class="pn">)&gt;</span> Y
+    <span class="pn">}</span>
+<span class="pn">{</span> <span class="kw">spawn</span> nand_combine<span class="pn">(</span>a<span class="pn">,</span> b<span class="pn">)</span> <span class="pn">}</span>
+
+<span class="com">// contracts compose contracts</span>
+<span class="kw">pub contract</span> <span class="fn">AndGate</span><span class="pn">(</span>a<span class="pn">:</span> <span class="pn">[</span>bool<span class="pn">],</span> b<span class="pn">:</span> <span class="pn">[</span>bool<span class="pn">])</span> <span class="pn">-&gt;</span> <span class="pn">[</span>bool<span class="pn">]</span> <span class="pn">{</span>
+    <span class="kw">let</span> nand_out <span class="pn">=</span> NandGate<span class="pn">(</span>a<span class="pn">,</span> b<span class="pn">);</span>
+    NandGate<span class="pn">(</span>nand_out<span class="pn">,</span> nand_out<span class="pn">)</span>
 <span class="pn">}</span></pre>
             </div>
           </div>

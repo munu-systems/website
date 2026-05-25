@@ -27,7 +27,7 @@
 
     function resize() {
       W = canvas.clientWidth = window.innerWidth;
-      H = canvas.clientHeight = Math.max(window.innerHeight, document.body.scrollHeight);
+      H = canvas.clientHeight = window.innerHeight;
       canvas.width = W * dpr;
       canvas.height = H * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -111,8 +111,8 @@
       raf = requestAnimationFrame(step);
     });
     window.addEventListener("mousemove", function (e) {
-      mouseX = e.clientX + window.scrollX;
-      mouseY = e.clientY + window.scrollY;
+      mouseX = e.clientX;
+      mouseY = e.clientY;
     });
     window.addEventListener("mouseout", function () { mouseX = -9999; mouseY = -9999; });
 
