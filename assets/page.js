@@ -6,7 +6,6 @@
     { id: "use-cases",   label: "Use Cases",   href: "use-cases.html" },
     { id: "get-started", label: "Get Started", href: "get-started.html" },
     { id: "ecosystem",   label: "Ecosystem",   href: "ecosystem.html" },
-    { id: "blog",        label: "Blog",        href: "blog.html" },
   ];
 
   var HAMBURGER_ICON = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
@@ -82,7 +81,6 @@
             '<ul>' +
               '<li><a href="https://github.com/munu-systems">GitHub Org</a></li>' +
               '<li><a href="https://github.com/munu-systems/munu/discussions">Discussions</a></li>' +
-              '<li><a href="blog.html">Blog</a></li>' +
             '</ul>' +
           '</div>' +
         '</div>' +

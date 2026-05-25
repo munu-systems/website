@@ -263,6 +263,40 @@
     </div>
   </section>
 
+  <!-- WHAT YOU GET -->
+  <section class="gs-section">
+    <div class="container">
+      <div class="gs-section-inner">
+        <h2>What You Get</h2>
+        <p class="section-sub">Three commands cover the full workflow — from source to verified deployment.</p>
+
+        <div class="opt">
+          <div class="opt-head">
+            <span class="opt-num">compile</span>
+            <span class="opt-label">Verify contracts and emit bytecode</span>
+          </div>
+<pre>munu compile hello.uv</pre>
+        </div>
+
+        <div class="opt">
+          <div class="opt-head">
+            <span class="opt-num">run</span>
+            <span class="opt-label">Compile and execute on the dataflow VM</span>
+          </div>
+<pre>munu run hello.uv</pre>
+        </div>
+
+        <div class="opt">
+          <div class="opt-head">
+            <span class="opt-num">node</span>
+            <span class="opt-label">Boot a network node from a signed manifest</span>
+          </div>
+<pre>munu node manifest.bin</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- INSTALLATION -->
   <section class="gs-section">
     <div class="container">
@@ -345,7 +379,7 @@ munu run hello.uv</pre>
             <div class="target-tag">no_std</div>
             <h4>Embedded</h4>
             <p>The kernel requires no OS, no heap, no allocator. Cooperative scheduling on bare metal.</p>
-<pre>// kernel embeds as a no_std crate</pre>
+<pre>cargo add munu-kernel --no-default-features</pre>
           </div>
           <div class="target">
             <div class="target-tag">node</div>
