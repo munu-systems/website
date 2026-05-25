@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Why modal mu-calculus for behaviours — Munu Blog</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+<meta name="description" content="Non-determinism is the enemy. Modal mu-calculus is the language for taming it — why Munu uses it instead of enum restart strategies." />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Why modal mu-calculus for behaviours — Munu Blog" />
+<meta property="og:description" content="Non-determinism is the enemy. Modal mu-calculus is the language for taming it — why Munu uses it instead of enum restart strategies." />
+<meta property="og:url" content="https://munu.hk/blog-modal-mu-calculus.html" />
+<meta property="og:site_name" content="Munu" />
+<meta property="og:image" content="https://munu.hk/assets/og-image.svg" />
+<meta name="twitter:image" content="https://munu.hk/assets/og-image.svg" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Why modal mu-calculus for behaviours — Munu Blog" />
+<meta name="twitter:description" content="Non-determinism is the enemy. Modal mu-calculus is the language for taming it — why Munu uses it instead of enum restart strategies." />
+<link rel="stylesheet" href="assets/fonts.css" />
+<link rel="stylesheet" href="assets/styles.css" />
+<style>
+  .post-hero {
+    padding: 120px 0 56px;
+  }
+  .post-hero .eyebrow {
+    color: var(--struct);
+    font-family: "Geist Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    margin-bottom: 22px;
+    display: block;
+  }
+  .post-hero h1 {
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    margin: 0 0 22px;
+    line-height: 1.1;
+    max-width: 800px;
+  }
+  .post-hero h1 .accent { color: var(--accent); }
+  .post-hero .post-meta {
+    color: var(--text-dim);
+    font-family: "Geist Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+  }
+
+  .post-body {
+    padding: 56px 0 120px;
+    border-top: 1px solid var(--border);
+  }
+  .post-body .post-inner {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .post-body p {
+    color: var(--text-mute);
+    font-size: 17px;
+    line-height: 1.75;
+    margin: 0 0 24px;
+  }
+  .post-body p strong { color: var(--text); font-weight: 500; }
+  .post-body p code {
+    color: var(--accent);
+    background: rgba(45,212,191,0.06);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+  .post-body h2 {
+    font-size: clamp(24px, 3vw, 32px);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    margin: 56px 0 20px;
+    color: var(--text);
+  }
+  .post-body h2 .accent { color: var(--accent); }
+  .post-body h3 {
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin: 40px 0 16px;
+    color: var(--text);
+  }
+  .post-body blockquote {
+    border-left: 2px solid var(--accent);
+    margin: 32px 0;
+    padding: 0 0 0 24px;
+    color: var(--text);
+    font-size: 18px;
+    line-height: 1.6;
+    font-style: italic;
+  }
+  .post-body .aside {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px 28px;
+    margin: 32px 0;
+  }
+  .post-body .aside .aside-label {
+    font-family: "Geist Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .post-body .aside p { margin-bottom: 0; font-size: 15px; }
+  .post-body .aside p + p { margin-top: 14px; }
+  .post-body hr {
+    border: none;
+    height: 1px;
+    background: var(--border);
+    margin: 48px 0;
+  }
+  .post-body .comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 32px 0;
+  }
+  @media (max-width: 700px) { .post-body .comparison { grid-template-columns: 1fr; } }
+  .post-body .comparison .col {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px;
+  }
+  .post-body .comparison .col-label {
+    font-family: "Geist Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .post-body .comparison .col.active { border-color: rgba(45,212,191,0.4); }
+  .post-body .comparison .col.active .col-label { color: var(--accent); }
+  .post-body .comparison .col p { font-size: 14px; line-height: 1.6; margin: 0; }
+  .post-body .comparison .col code { font-size: 0.88em; }
+  .post-nav {
+    padding: 48px 0;
+    border-top: 1px solid var(--border);
+  }
+  .post-nav a {
+    color: var(--accent);
+    font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .post-nav a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div id="header-slot"></div>
+
+<main class="shell">
+
+  <section class="post-hero">
+    <div class="container-narrow">
+      <span class="eyebrow">Blog</span>
+      <h1>Why <span class="accent">modal mu-calculus</span> for behaviours</h1>
+      <div class="post-meta">25 MAY 2026 · STEWART MACKENZIE</div>
+    </div>
+  </section>
+
+  <section class="post-body">
+    <div class="container-narrow">
+      <div class="post-inner">
+
+<p><strong>Non-determinism is the enemy.</strong> Every bug in a distributed system, every race condition, every heisentest — they all trace back to the same root cause: the system entered a state the programmer didn't anticipate because something happened in an order they didn't predict. The goal of any serious systems language is to make things deterministic, and when they can't be deterministic, to return to determinism as fast as possible.</p>
+
+<p>This is the design principle behind Munu's <code>behaviour</code> clause, and it's why we chose modal mu-calculus as the language for writing it.</p>
+
+<h2>The <span class="accent">non-determinism</span> problem</h2>
+
+<p>A single process running in isolation is deterministic. Give it the same input, it produces the same output. The trouble starts the moment you have two processes. Now you have messages, and messages arrive in some order, and that order depends on scheduling, network latency, load, cosmic rays — things outside your control.</p>
+
+<p><strong>If you don't know the order messages arrive in, your system is non-deterministic.</strong> If you do know the order, it's deterministic. This is the fundamental divide. A scheduler that enforces ordering is a determinism machine. A protocol that tolerates arbitrary ordering is a concession to non-determinism.</p>
+
+<p>Erlang understood this. The entire OTP philosophy — fail fast, let it crash, restart from a known good state — is a strategy for <strong>returning to determinism quickly</strong>. When a process enters an unpredictable state, don't try to recover. Kill it. Restart it. Begin from a state you understand. The supervisor is not error handling — it's a determinism recovery mechanism.</p>
+
+<h2>Where Erlang <span class="accent">hits the ceiling</span></h2>
+
+<p>OTP's supervisor restart strategies are an enum: <code>one_for_one</code>, <code>one_for_all</code>, <code>rest_for_one</code>, <code>simple_one_for_one</code>. Four options. That's it.</p>
+
+<p>These four cover a surprising number of cases. But they are fundamentally <strong>fixed responses to a single event type</strong> — a child process died. They can't express:</p>
+
+<p>— "Restart this child, but only if it crashed twice within 10 seconds — otherwise escalate."<br>
+— "If child A fails, restart B and C but not D, because D holds state that A depends on but B and C don't."<br>
+— "Wait for acknowledgement from a quorum of three out of five replicas before considering a write committed."<br>
+— "If two children fail simultaneously, that's a different situation than if they fail sequentially."</p>
+
+<p>Hardened Erlang programmers write these patterns. They do it with nested supervisors, custom gen_servers that implement their own restart logic, state machines that track failure counts, and careful message passing between supervisor levels. It works — but it's <strong>ad-hoc, implicit, and unverifiable</strong>. The logic is spread across multiple modules. No tool can check that the quorum protocol is correct.</p>
+
+<h2>The <span class="accent">scheduler question</span></h2>
+
+<p>Here's the insight that led us to modal mu-calculus: <strong>a behaviour clause is a scheduler specification</strong>. It tells the runtime what to do when events happen. Process A sent a message. Process B crashed. A quorum was reached. A timeout fired. The behaviour is a formula that matches events and prescribes actions — exactly what a scheduler does.</p>
+
+<p>So the question becomes: what's the best language for writing scheduler specifications?</p>
+
+<p>You need something that can talk about <strong>sequences of events over time</strong> — not just "what happened" but "what happened, and then what happened next, and what must always eventually happen." You need fixed points — the ability to say "this pattern repeats forever" (the <code>nu</code> operator) or "this pattern eventually terminates" (the <code>mu</code> operator). You need modalities — the ability to say "after observing event X, action Y must be possible."</p>
+
+<p>Modal mu-calculus has all of this. It's the most expressive temporal logic in the linear-time/branching-time hierarchy. It subsumes CTL, CTL*, LTL, and Hennessy-Milner logic. It is exactly the right tool for the job.</p>
+
+<p>And here's the thing that made the decision easy: <strong>LLMs already know it</strong>. Modal mu-calculus appears in hundreds of papers, textbooks, and verification tool manuals. When you ask an LLM to write a behaviour formula, it can reason about it. It can check it. It can generate counter-examples. This is not true of ad-hoc Erlang supervisor trees.</p>
+
+<h2>What it <span class="accent">looks like</span></h2>
+
+<p>An Erlang supervisor restart strategy is a single atom:</p>
+
+<div class="comparison">
+  <div class="col">
+    <div class="col-label">Erlang</div>
+    <p><code>one_for_one</code> — if a child dies, restart just that child. No conditions, no sequencing, no memory of prior failures.</p>
+  </div>
+  <div class="col active">
+    <div class="col-label">Munu</div>
+    <p><code>nu X. [fail(self, _)] &lt;restart(self)&gt; X and [_] X</code> — observe events forever. If a fail event from self is observed with any reason, a restart action must be available, and then continue observing. For all other events, continue observing.</p>
+  </div>
+</div>
+
+<p>They look similar for the simple case. The power shows up when you need something the enum can't express.</p>
+
+<h3>Two strikes and escalate</h3>
+
+<p>Restart on first failure. Escalate on second failure. In Erlang this requires a custom supervisor with state tracking. In Munu:</p>
+
+<p><code>do: nu X. [fail(self, _)] &lt;restart(self)&gt; nu Y. [fail(self, _)] false and [_] Y and [_] X</code></p>
+
+<p>One formula. Two fixed-point variables. The outer loop (<code>X</code>) handles the first failure by restarting and entering the inner loop (<code>Y</code>). The inner loop treats a second failure as a violation (<code>false</code>) — which propagates up to the parent supervisor. No state variables, no failure counters, no message passing.</p>
+
+<h3>Quorum</h3>
+
+<p>Wait for acknowledgement from a majority before proceeding. In Erlang, this is a gen_statem or a custom process with careful bookkeeping. In the mu-calculus, a quorum over three replicas is a nesting of diamond modalities — each <code>&lt;ack(replica_n)&gt;</code> demands that an acknowledgement from that replica is reachable, and the nesting structure specifies how many must be observed before the formula is satisfied.</p>
+
+<p>What took a hundred lines of Erlang — state machine, message handlers, timeout logic, edge cases for late arrivals — collapses into a formula that a model checker can verify and an LLM can read.</p>
+
+<h2>Determinism <span class="accent">recovery</span></h2>
+
+<p>The deeper point is not that mu-calculus is more expressive than an enum. It's that mu-calculus formulas are <strong>specifications of how to return to determinism</strong>.</p>
+
+<p>When a process crashes, the system has entered a non-deterministic state — you don't know what the process was doing when it died, what messages were in flight, what partial state it left behind. The behaviour formula specifies the <strong>path back to a known state</strong>. Restart from the last checkpoint. Wait for a quorum to agree on the current state. Escalate to a supervisor that has a wider view of the system.</p>
+
+<p>Every one of these is a temporal property — something that must <em>eventually</em> happen, or something that must <em>always</em> hold. Temporal properties are what modal mu-calculus was invented to express. We're not forcing a formalism onto a problem. We're using the formalism that was designed for exactly this problem.</p>
+
+<blockquote>The behaviour clause doesn't handle errors. It specifies the contract between a process and its supervisor for maintaining determinism in the presence of failure.</blockquote>
+
+<h2>The <span class="accent">must</span> clause</h2>
+
+<p>There's a second half to every behaviour: the <code>must:</code> clause. If <code>do:</code> specifies what the supervisor does when events happen, <code>must:</code> specifies what the supervised process is obligated to do. It's the process's side of the contract.</p>
+
+<p>A <code>must:</code> clause that says <code>true</code> imposes no obligation — the process can do anything. A <code>must:</code> clause that says <code>nu Y. [fail(self, _)]~fast_response &lt;restart(self)&gt; Y</code> says: if this process fails, it must fail within the timing envelope defined by <code>fast_response</code>, and it must be restartable. The tilde (<code>~</code>) attaches a timing CDF — a probabilistic deadline.</p>
+
+<p>This is where behaviour formulas go beyond anything OTP can express. OTP supervisors don't constrain the behaviour of the supervised process — they only react to its death. Munu's <code>must:</code> clause lets you write <strong>obligations that the supervised process must satisfy</strong>, and the compiler can verify that the process's implementation is consistent with those obligations.</p>
+
+<h2>Why not just <span class="accent">write code</span></h2>
+
+<p>You could write all of this as regular code. Erlang developers do, every day. But there's a critical difference: <strong>code is opaque to analysis</strong>. A custom supervisor written in Erlang is a program that happens to implement a supervision strategy. A behaviour formula is a <em>specification</em> of a supervision strategy.</p>
+
+<p>The formula can be model-checked. The formula can be composed — two behaviour formulas can be merged and the result checked for contradictions. The formula can be read by an LLM and translated into natural language. The formula can be compared to the actual process trace at runtime and violations reported immediately.</p>
+
+<p>None of this is possible when the supervision logic is "a gen_server with some state." You've lost the structure. You've lost the ability to reason about it. You've traded determinism for flexibility, and in distributed systems, that trade always costs you eventually.</p>
+
+<hr>
+
+<div class="aside">
+  <div class="aside-label">The formal connection</div>
+  <p>Modal mu-calculus extends Hennessy-Milner logic with least (μ) and greatest (ν) fixed points. The box modality [a] means "for all transitions labelled a" — a universal quantifier over events. The diamond modality &lt;a&gt; means "there exists a transition labelled a" — an existential quantifier. The fixed points add recursion: ν X. φ(X) defines the greatest fixed point of φ, which captures "φ holds forever" — liveness. μ X. φ(X) defines the least fixed point, capturing "φ eventually holds" — termination.</p>
+  <p>This gives behaviour formulas exactly the right expressive power for supervision: "always eventually restart" is a ν-formula wrapping a μ-formula. "Never allow two consecutive failures without escalation" is a ν-formula with nested branching. The alternation depth — how many times μ and ν nest inside each other — corresponds directly to the complexity of the temporal property being expressed.</p>
+</div>
+
+<section class="post-nav">
+  <div class="container-narrow">
+    <a href="blog.html">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M13 8H3M8 3L3 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      The mu/nu duality
+    </a>
+  </div>
+</section>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div id="footer-slot"></div>
+
+<script src="assets/page.js"></script>
+<script src="assets/network-bg.js"></script>
+<script> setupPage({ active: "blog" }); </script>
+</body>
+</html>

@@ -419,6 +419,27 @@ h1, h2, h3, h4 {
 .code-window pre .err { color: var(--danger); }
 .code-window pre .ok  { color: var(--accent); }
 
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity .15s, color .15s, border-color .15s;
+}
+.code-window .copy-btn { top: 48px; }
+.code-window:hover .copy-btn,
+.code-block:hover .copy-btn { opacity: 1; }
+.copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+
 .site-footer {
   border-top: 1px solid var(--border);
   padding: 72px 0 40px;

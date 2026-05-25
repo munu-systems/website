@@ -5,7 +5,7 @@
     { id: "methodology", label: "Methodology", href: "methodology.html" },
     { id: "use-cases",   label: "Use Cases",   href: "use-cases.html" },
     { id: "get-started", label: "Get Started", href: "get-started.html" },
-    { id: "ecosystem",   label: "Ecosystem",   href: "ecosystem.html" },
+    { id: "blog",        label: "Blog",        href: "blog.html" },
   ];
 
   var HAMBURGER_ICON = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
@@ -65,7 +65,7 @@
               '<li><a href="methodology.html">Methodology</a></li>' +
               '<li><a href="use-cases.html">Use Cases</a></li>' +
               '<li><a href="get-started.html">Get Started</a></li>' +
-              '<li><a href="ecosystem.html">Ecosystem</a></li>' +
+              '<li><a href="blog.html">Blog</a></li>' +
             '</ul>' +
           '</div>' +
           '<div class="footer-col">' +
@@ -105,5 +105,28 @@
     bindMobileNav();
     var footerSlot = document.getElementById("footer-slot");
     if (footerSlot) footerSlot.outerHTML = renderFooter();
+    bindCopyButtons();
   };
+
+  function bindCopyButtons() {
+    document.querySelectorAll('.code-window, .code-block').forEach(function (block) {
+      if (block.querySelector('.copy-btn')) return;
+      var btn = document.createElement('button');
+      btn.className = 'copy-btn';
+      btn.setAttribute('aria-label', 'Copy code');
+      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+      btn.addEventListener('click', function () {
+        var pre = block.querySelector('pre');
+        if (!pre) return;
+        navigator.clipboard.writeText(pre.textContent).then(function () {
+          btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>';
+          setTimeout(function () {
+            btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+          }, 1500);
+        });
+      });
+      block.style.position = 'relative';
+      block.appendChild(btn);
+    });
+  }
 })();

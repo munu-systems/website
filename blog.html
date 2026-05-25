@@ -3,28 +3,26 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Blog — Munu</title>
+<title>The mu/nu duality — Munu Blog</title>
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-<meta name="description" content="The Munu blog: updates on the language, toolchain, and ecosystem for building verified distributed systems." />
-<meta property="og:type" content="website" />
-<meta property="og:title" content="Blog — Munu" />
-<meta property="og:description" content="Updates on the Munu language, toolchain, and ecosystem for building verified distributed systems." />
+<meta name="description" content="Why every programming language has two kinds of computation hiding in it — and what happens when you make both explicit." />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="The mu/nu duality — Munu Blog" />
+<meta property="og:description" content="Why every programming language has two kinds of computation hiding in it — and what happens when you make both explicit." />
 <meta property="og:url" content="https://munu.hk/blog.html" />
 <meta property="og:site_name" content="Munu" />
-<meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Blog — Munu" />
-<meta name="twitter:description" content="Updates on the Munu language, toolchain, and ecosystem for building verified distributed systems." />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<meta property="og:image" content="https://munu.hk/assets/og-image.svg" />
+<meta name="twitter:image" content="https://munu.hk/assets/og-image.svg" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="The mu/nu duality — Munu Blog" />
+<meta name="twitter:description" content="Why every programming language has two kinds of computation hiding in it — and what happens when you make both explicit." />
+<link rel="stylesheet" href="assets/fonts.css" />
 <link rel="stylesheet" href="assets/styles.css" />
 <style>
-  /* HERO */
-  .blog-hero {
-    padding: 120px 0 72px;
-    text-align: center;
+  .post-hero {
+    padding: 120px 0 56px;
   }
-  .blog-hero .eyebrow {
+  .post-hero .eyebrow {
     color: var(--struct);
     font-family: "Geist Mono", monospace;
     font-size: 12px;
@@ -33,128 +31,91 @@
     margin-bottom: 22px;
     display: block;
   }
-  .blog-hero h1 {
-    font-size: clamp(44px, 5.5vw, 64px);
+  .post-hero h1 {
+    font-size: clamp(36px, 5vw, 56px);
     font-weight: 500;
     letter-spacing: -0.025em;
     margin: 0 0 22px;
-    line-height: 1.05;
+    line-height: 1.1;
+    max-width: 800px;
   }
-  .blog-hero h1 .accent { color: var(--accent); }
-  .blog-hero .lede {
-    color: var(--text-mute);
-    font-size: 17px;
-    line-height: 1.55;
-    max-width: 620px;
-    margin: 0 auto;
+  .post-hero h1 .accent { color: var(--accent); }
+  .post-hero .post-meta {
+    color: var(--text-dim);
+    font-family: "Geist Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
   }
 
-  /* COMING SOON CARD */
-  .soon-shell {
-    padding: 100px 0 140px;
+  .post-body {
+    padding: 56px 0 120px;
     border-top: 1px solid var(--border);
   }
-  .soon-inner {
-    max-width: 560px;
+  .post-body .post-inner {
+    max-width: 720px;
     margin: 0 auto;
-    text-align: center;
   }
-  .soon-icon {
-    width: 64px;
-    height: 64px;
-    margin: 0 auto 24px;
-    border-radius: 10px;
-    background: rgba(45, 212, 191, 0.06);
-    border: 1px solid rgba(45, 212, 191, 0.25);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--accent);
-  }
-  .soon-icon svg { width: 28px; height: 28px; }
-
-  .soon-inner h2 {
-    font-size: 28px;
-    letter-spacing: -0.02em;
-    font-weight: 500;
-    margin: 0 0 16px;
-  }
-  .soon-inner > p {
+  .post-body p {
     color: var(--text-mute);
-    font-size: 16px;
-    line-height: 1.6;
-    max-width: 480px;
-    margin: 0 auto 36px;
+    font-size: 17px;
+    line-height: 1.75;
+    margin: 0 0 24px;
   }
-
-  .topics-box {
+  .post-body p strong { color: var(--text); font-weight: 500; }
+  .post-body p code {
+    color: var(--accent);
+    background: rgba(45,212,191,0.06);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+  .post-body h2 {
+    font-size: clamp(24px, 3vw, 32px);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    margin: 56px 0 20px;
+    color: var(--text);
+  }
+  .post-body h2 .accent { color: var(--accent); }
+  .post-body h3 {
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin: 40px 0 16px;
+    color: var(--text);
+  }
+  .post-body blockquote {
+    border-left: 2px solid var(--accent);
+    margin: 32px 0;
+    padding: 0 0 0 24px;
+    color: var(--text);
+    font-size: 18px;
+    line-height: 1.6;
+    font-style: italic;
+  }
+  .post-body .aside {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 26px 32px;
-    margin: 0 auto 36px;
-    max-width: 460px;
-    text-align: left;
+    border-radius: 6px;
+    padding: 24px 28px;
+    margin: 32px 0;
   }
-  .topics-label {
+  .post-body .aside .aside-label {
     font-family: "Geist Mono", monospace;
     font-size: 11px;
-    letter-spacing: 0.22em;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    margin-bottom: 18px;
-    text-align: center;
-  }
-  .topics-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-  .topics-list li {
-    display: grid;
-    grid-template-columns: 10px 1fr;
-    gap: 12px;
-    align-items: baseline;
-    color: var(--text);
-    font-size: 14.5px;
-    line-height: 1.4;
-  }
-  .topics-list li::before {
-    content: "";
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--accent);
-    margin-top: 7px;
-  }
-
-  .watch-line {
-    color: var(--text-mute);
-    font-size: 14px;
-    margin: 0 0 16px;
-  }
-
-  .gh-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 11px 22px;
-    border: 1px solid var(--border-strong);
-    border-radius: 6px;
-    color: var(--text);
-    font-size: 14.5px;
-    font-weight: 500;
-    transition: all .15s;
-  }
-  .gh-btn:hover {
-    border-color: var(--accent);
-    background: var(--bg-card-hov);
+    letter-spacing: 0.2em;
     color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 12px;
   }
-  .gh-btn svg { width: 16px; height: 16px; }
+  .post-body .aside p { margin-bottom: 0; font-size: 15px; }
+  .post-body .aside p + p { margin-top: 14px; }
+  .post-body hr {
+    border: none;
+    height: 1px;
+    background: var(--border);
+    margin: 48px 0;
+  }
 </style>
 </head>
 <body>
@@ -162,46 +123,88 @@
 
 <main class="shell">
 
-  <!-- HERO -->
-  <section class="blog-hero">
-    <div class="container">
-      <span class="eyebrow">Updates</span>
-      <h1>The Munu <span class="accent">Blog.</span></h1>
-      <p class="lede">Technical deep-dives, release notes, and design decisions from the Munu team.</p>
+  <section class="post-hero">
+    <div class="container-narrow">
+      <span class="eyebrow">Blog</span>
+      <h1>The <span class="accent">mu/nu</span> duality</h1>
+      <div class="post-meta">25 MAY 2026 · STEWART MACKENZIE</div>
     </div>
   </section>
 
-  <!-- COMING SOON -->
-  <section class="soon-shell">
-    <div class="container">
-      <div class="soon-inner">
+  <section class="post-body">
+    <div class="container-narrow">
+      <div class="post-inner">
 
-        <div class="soon-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-            <path d="M4 5h11a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5Z"/>
-            <path d="M17 9h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2"/>
-            <path d="M8 9h5M8 13h5M8 17h3"/>
-          </svg>
-        </div>
+<p>Every programming language secretly has two kinds of computation in it. One kind <strong>builds a finite value and stops</strong>. The other kind <strong>observes an infinite process and never stops</strong>. Most languages hide this distinction entirely. Munu makes it the foundation of the language.</p>
 
-        <h2>Coming Soon</h2>
-        <p>We're preparing the first posts on the design of the contract model, the kernel architecture, and the journey from category theory to working bytecode.</p>
+<h2>Two kinds of <span class="accent">computation</span></h2>
 
-        <div class="topics-box">
-          <div class="topics-label">Upcoming Topics</div>
-          <ul class="topics-list">
-            <li>Why μ and ν need a language, not a library</li>
-            <li>Designing the 77-opcode ISA</li>
-            <li>Hyperbolic routing: why the Poincaré disk</li>
-            <li>From ψ-terms to practical type inference</li>
-          </ul>
-        </div>
+<p>Think about the simplest programs you write. A function that doubles a number takes an input, produces an output, and terminates. It builds something finite. We call this <code>mu</code>.</p>
 
-        <p class="watch-line">Watch the repository for updates:</p>
-        <a class="gh-btn" href="https://github.com/munu-systems/munu">
-          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.49c-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.5 7.5 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-          Star on GitHub
-        </a>
+<p>Now think about a server. It accepts a request, responds, and waits for the next one. It doesn't terminate — termination is a bug. It <em>observes</em> an infinite stream of events. We call this <code>nu</code>.</p>
+
+<p>Every non-trivial system has both. A web server (<code>nu</code>) calls a request handler (<code>mu</code>). A sensor loop (<code>nu</code>) reads a temperature (<code>mu</code>). A supervisor (<code>nu</code>) restarts a failed process (<code>mu</code>).</p>
+
+<p><strong>The question is whether your language knows the difference.</strong></p>
+
+<h2>What Erlang <span class="accent">got right</span></h2>
+
+<p>Erlang is the closest any production language has come to making this split explicit. A gen_server's <code>handle_call</code> is a finite computation — receive a message, compute a reply, return. The gen_server loop itself is infinite — it calls <code>handle_call</code> forever. OTP's supervisors compose these infinite processes into trees.</p>
+
+<p>But Erlang never names the duality. The infinite loop is just tail recursion. The finite handler is just a function. There's no syntactic or type-level distinction between "this function terminates" and "this function runs forever." The <code>nu</code> operator is there — it's just implicit, buried in recursive calls and OTP conventions.</p>
+
+<p>This works. Erlang has powered telecom switches for decades. But the implicit nu constrains what you can do with it.</p>
+
+<h2>What happens when <span class="accent">nu is explicit</span></h2>
+
+<p>When the language knows that a computation is infinite — not by convention, not by pattern, but by declaration — three things become possible that are impossible otherwise.</p>
+
+<h3>1. Hot code swapping becomes principled</h3>
+
+<p>If the compiler knows which computations are infinite, it knows exactly where to inject new code. An infinite process has a well-defined observation boundary — the point where it yields and waits for the next event. That's where you swap. Erlang does this through careful convention and runtime magic. When <code>nu</code> is a language construct, the compiler can verify that a hot swap is safe <em>before</em> it happens.</p>
+
+<h3>2. Supervision becomes a type, not a pattern</h3>
+
+<p>In Erlang, a supervisor is a behaviour — a convention enforced by OTP callbacks. In Munu, a <strong>contract</strong> is a language construct that composes infinite processes. The <code>behaviour</code> clause specifies what happens when a child process fails: restart it, escalate, or let it die. This isn't a convention the programmer must follow — it's a formula the compiler verifies.</p>
+
+<h3>3. You can put logic on the infinite</h3>
+
+<p>This is the big one. Once you can name and compose infinite processes, you can attach verification logic to them. A <code>behaviour</code> clause is a formula over the infinite — it specifies what must always be true of a process that never terminates. A value logic clause proves properties about the finite computations inside. A privacy logic clause controls what information flows where.</p>
+
+<p>None of this is possible when the infinite is just recursion. You can't attach a type to "calls itself forever." You can't verify a property of "the thing inside the loop." You need the <code>nu</code> operator to be explicit for the compiler to reason about it.</p>
+
+<blockquote>Contracts compose the infinite. The infinite composes the finite. The finite is where the work happens. The contract is where the guarantees live.</blockquote>
+
+<h2>The <span class="accent">contract</span> as composition</h2>
+
+<p>A Munu contract is not a class, not a module, not an actor. It's a <strong>composition point</strong> for the mu/nu duality. The contract body spawns infinite and finite computations. The behaviour clause governs what happens when they fail. The value logic clause governs what properties their outputs must satisfy.</p>
+
+<p>This is what "contracts compose the infinite" means concretely. A contract can spawn other contracts. Each one supervises its own tree of mu and nu computations. The supervisor tree emerges from the language, not from a library.</p>
+
+<p>And because contracts are explicit compositions of mu and nu, they're <strong>reusable</strong>. A contract is a unit of deployment, verification, and hot-swap. You can move it from an MCU to a server. You can upgrade it at runtime. You can prove properties about it at compile time. None of this works if the infinite is hidden inside recursion.</p>
+
+<h2>Why this matters <span class="accent">for LLMs</span></h2>
+
+<p>LLMs are good at finite computation. Ask one to write a function that parses a date, sorts a list, or computes a hash — it will probably get it right. Ask it to write a correct concurrent server and it will hallucinate race conditions, forget edge cases in error handling, and produce something that passes a few tests but fails in production.</p>
+
+<p>The mu/nu split helps because it <strong>separates what LLMs are good at from what they're bad at</strong>. The LLM writes mu functions — finite, verifiable, bounded. The contract structure — which nu processes to spawn, how to supervise them, what invariants to maintain — is where the human (or a more capable system) applies judgement. And the compiler verifies both.</p>
+
+<hr>
+
+<div class="aside">
+  <div class="aside-label">For the categorically inclined</div>
+  <p>The names are not accidental. <strong>mu</strong> (μ) is the least fixed point — the initial algebra. It builds finite structures by induction: natural numbers, lists, trees. A mu function always terminates because the structure it builds is finite.</p>
+  <p><strong>nu</strong> (ν) is the greatest fixed point — the final coalgebra. It observes infinite structures by coinduction: streams, servers, interactive processes. A nu function never terminates because the structure it observes is infinite.</p>
+  <p>The duality between initial algebras and final coalgebras is one of the deepest in computer science. Most languages collapse it. Munu makes it a first-class construct — not because category theory is the point, but because the programming model that falls out of the duality is exactly what fault-tolerant distributed systems need.</p>
+</div>
+
+<div style="padding:48px 0;border-top:1px solid var(--border)">
+  <a href="blog-modal-mu-calculus.html" style="color:var(--accent);font-size:15px;display:inline-flex;align-items:center;gap:8px">
+    Next: Why modal mu-calculus for behaviours
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </a>
+</div>
+
       </div>
     </div>
   </section>
