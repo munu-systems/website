@@ -460,13 +460,14 @@
             <span class="kw">nu</span> Y<span class="pn">.</span>
                 <span class="pn">[</span>fail<span class="pn">(</span><span class="kw">self</span><span class="pn">,</span> _<span class="pn">)]</span><span class="pn">~</span><span class="fn">fast_response</span>
                     <span class="pn">&lt;</span>restart<span class="pn">(</span><span class="kw">self</span><span class="pn">)&gt;</span> Y
-    <span class="pn">}</span>
-<span class="pn">{</span> <span class="kw">spawn</span> nand_combine<span class="pn">(</span>a<span class="pn">,</span> b<span class="pn">)</span> <span class="pn">}</span>
+    <span class="pn">}</span> <span class="pn">{</span>
+    <span class="kw">spawn</span> nand_combine<span class="pn">(</span>a<span class="pn">,</span> b<span class="pn">)</span>
+<span class="pn">}</span>
 
 <span class="com">// contracts compose contracts</span>
 <span class="kw">pub contract</span> <span class="fn">AndGate</span><span class="pn">(</span>a<span class="pn">:</span> <span class="pn">[</span>bool<span class="pn">],</span> b<span class="pn">:</span> <span class="pn">[</span>bool<span class="pn">])</span> <span class="pn">-&gt;</span> <span class="pn">[</span>bool<span class="pn">]</span> <span class="pn">{</span>
-    <span class="kw">let</span> nand_out <span class="pn">=</span> NandGate<span class="pn">(</span>a<span class="pn">,</span> b<span class="pn">);</span>
-    NandGate<span class="pn">(</span>nand_out<span class="pn">,</span> nand_out<span class="pn">)</span>
+    <span class="kw">let</span> nand_out <span class="pn">=</span> <span class="kw">spawn</span> NandGate<span class="pn">(</span>a<span class="pn">,</span> b<span class="pn">);</span>
+    <span class="kw">spawn</span> NandGate<span class="pn">(</span>nand_out<span class="pn">,</span> nand_out<span class="pn">)</span>
 <span class="pn">}</span></pre>
             </div>
           </div>
@@ -595,7 +596,7 @@
 
 <span class="kw">pub contract</span> <span class="fn">Eager</span><span class="pn">(</span>n<span class="pn">:</span> i64<span class="pn">)</span> <span class="pn">-&gt;</span> <span class="pn">[</span>i64<span class="pn">]</span> <span class="pn">{</span>
   <span class="kw">let</span> stream <span class="pn">=</span> <span class="kw">spawn</span> produce<span class="pn">(</span>n<span class="pn">);</span>  <span class="com">// spawns produce on its own thread</span>
-  head_of<span class="pn">(</span>stream<span class="pn">)</span>           <span class="com">// blocks until first element is Bound</span>
+  <span class="kw">spawn</span> head_of<span class="pn">(</span>stream<span class="pn">)</span>           <span class="com">// blocks until first element is Bound</span>
 <span class="pn">}</span></pre>
             </div>
 
@@ -654,7 +655,7 @@
 <span class="pn">}</span>
 
 <span class="kw">pub contract</span> <span class="fn">Lazy</span><span class="pn">(</span>n<span class="pn">:</span> i64<span class="pn">)</span> <span class="pn">-&gt;</span> <span class="pn">[</span>i64<span class="pn">]</span> <span class="pn">{</span>
-  use_result<span class="pn">(</span>n<span class="pn">)</span>
+  <span class="kw">spawn</span> use_result<span class="pn">(</span>n<span class="pn">)</span>
 <span class="pn">}</span></pre>
             </div>
 
