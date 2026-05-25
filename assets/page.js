@@ -9,6 +9,9 @@
     { id: "blog",        label: "Blog",        href: "blog.html" },
   ];
 
+  var HAMBURGER_ICON = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/></svg>';
+  var CLOSE_ICON = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="4" y1="4" x2="16" y2="16"/><line x1="16" y1="4" x2="4" y2="16"/></svg>';
+
   function renderHeader(active) {
     var items = NAV_ITEMS
       .map(function (it) {
@@ -27,8 +30,20 @@
             '<span>GitHub</span>' +
           '</a>' +
         '</div>' +
+        '<button class="nav-toggle" aria-label="Toggle navigation">' + HAMBURGER_ICON + '</button>' +
       '</div>' +
     '</header>';
+  }
+
+  function bindMobileNav() {
+    var toggle = document.querySelector('.nav-toggle');
+    if (!toggle) return;
+    toggle.addEventListener('click', function () {
+      var nav = document.querySelector('.nav-links');
+      var open = nav.classList.toggle('open');
+      toggle.innerHTML = open ? CLOSE_ICON : HAMBURGER_ICON;
+      toggle.setAttribute('aria-expanded', open);
+    });
   }
 
   function renderFooter() {
@@ -89,6 +104,7 @@
     }
     var headerSlot = document.getElementById("header-slot");
     if (headerSlot) headerSlot.outerHTML = renderHeader(active);
+    bindMobileNav();
     var footerSlot = document.getElementById("footer-slot");
     if (footerSlot) footerSlot.outerHTML = renderFooter();
   };
